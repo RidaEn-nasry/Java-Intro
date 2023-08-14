@@ -1,9 +1,11 @@
 
 
 class User {
-    private int id;
+    final private int id;
     private String name;
     private double balance;
+    private TransactionLinkedList transactions = new TransactionLinkedList();
+
 
 
     public User(String name, double balance) {
@@ -13,8 +15,12 @@ class User {
         }
         this.balance = balance;
         this.name = name;
-        // generate id
+        this.id = UserIdsGenerator.getInstance().generateId();
     };
+
+    public int getId() {
+        return this.id;
+    }
 
     public double getBalance() {
         return this.balance;
@@ -28,6 +34,11 @@ class User {
         return this.name;
     }
 
-
-
+    public void addTransaction(Transaction transaction) {
+        this.transactions.addTransaction(transaction);
+    }
+    public TransactionLinkedList getTransactions() {
+        return this.transactions;
+    }
+    
 }

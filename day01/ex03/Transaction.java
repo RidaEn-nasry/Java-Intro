@@ -14,9 +14,8 @@ class Transaction {
 
     public Transaction(User sender, User recipient, TransferCat transferCat, double amount) {
         // generate id later
-        
         if ((transferCat == TransferCat.DEBIT && amount < 0)
-                || (transferCat == TransferCat.CREDIT && amount > 0)) {
+        || (transferCat == TransferCat.CREDIT && amount > 0)) {
             System.err.println("IllegalArgument");
             System.exit(-1);
         }

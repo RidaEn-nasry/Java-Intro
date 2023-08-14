@@ -1,7 +1,7 @@
 
 
 class User {
-    private int id;
+    final private int id;
     private String name;
     private double balance;
 
@@ -13,8 +13,12 @@ class User {
         }
         this.balance = balance;
         this.name = name;
-        // generate id
+        this.id = UserIdsGenerator.getInstance().generateId();
     };
+
+    public int getId() {
+        return this.id;
+    }
 
     public double getBalance() {
         return this.balance;
@@ -27,7 +31,4 @@ class User {
     public String getName() {
         return this.name;
     }
-
-
-
 }

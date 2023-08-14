@@ -16,7 +16,7 @@ class Transaction {
         // generate id later
         
         if ((transferCat == TransferCat.DEBIT && amount < 0)
-                || (transferCat == TransferCat.CREDIT && amount > 0)) {
+        || (transferCat == TransferCat.CREDIT && amount > 0)) {
             System.err.println("IllegalArgument");
             System.exit(-1);
         }
