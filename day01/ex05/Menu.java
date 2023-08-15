@@ -100,17 +100,30 @@ class Menu {
                 Transaction[] transactions = transactionService.getUserTransactions(id);
                 for (Transaction transaction : transactions) {
                     if (transaction.getSender().getId() == user.getId()) {
-                        System.out.println("To " + transaction.getRecipient().getName() + "(" + "id = " + transaction.getRecipient().getId() + ")" + " -" + (int) transaction.getAmount() + " id = " + transaction.getId());
+                        System.out.println("To " + transaction.getRecipient().getName() + "(" + "id = "
+                                + transaction.getRecipient().getId() + ")" + " -" + (int) transaction.getAmount()
+                                + " id = " + transaction.getId());
                     } else {
-                        System.out.println("From " + transaction.getSender().getName() + "(" + "id = " + transaction.getSender().getId() + ")" + " +" + (int) transaction.getAmount() + " id = " + transaction.getId());
+                        System.out.println("From " + transaction.getSender().getName() + "(" + "id = "
+                                + transaction.getSender().getId() + ")" + " +" + (int) transaction.getAmount()
+                                + " id = " + transaction.getId());
                     }
                 }
-
+            } else if (choice == 5) {
+                if (!profile.equals("dev")) {
+                    System.out.println("\nThis option is only available in dev mode, run with --profile=dev\n");
+                    continue;
+                }
+            } else if (choice == 6) {
+                if (!profile.equals("dev")) {
+                    System.out.println("\nThis option is only available in dev mode, run with --profile=dev\n");
+                    continue;
+                }
+            } else if (choice == 7) {
+                break;
             }
             System.out.println("---------------------------------------------------------");
         }
-
-
 
     }
 
