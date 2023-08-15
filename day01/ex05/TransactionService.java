@@ -43,9 +43,9 @@ class TransactionService {
         // what makes a transaction valid?
         TransactionLinkedList unpairedTransactions = new TransactionLinkedList();
         for (int i = 0; i < usersList.getUsersNum(); i++) {
-            User curentUser = usersList.getUserByIndex(i);
-            Transaction[] transactions = usersList.getUserByIndex(i).getTransactions().toArray();
-            for (int j = 0; i < transactions.length; j++) {
+            User curentUser = usersList.getUserById(i + 1);
+            Transaction[] transactions = curentUser.getTransactions().toArray();
+            for (int j = 0; j < transactions.length; j++) {
                 // check if the other user has a transaction with the same id
                 // if not, add it to the unpairedTransactions list
                 Transaction[] otherTransactions = null;
@@ -56,12 +56,13 @@ class TransactionService {
                 }
                 boolean found = false;
                 for (int k = 0; k < otherTransactions.length; k++) {
-                    if (otherTransactions[j].getId().equals(transactions[j].getId())) {
+                    if (otherTransactions[k].getId().equals(transactions[j].getId())) {
                         found = true;
+                        // System.out.println("found");
                         break;
                     }
                 }
-                if (found == true) {
+                if (found == false) {
                     unpairedTransactions.addTransaction(transactions[j]);
                 }
             }

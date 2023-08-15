@@ -34,6 +34,7 @@ class UsersArrayList implements UserList {
             return null;
             // throw new UserNotFoundException("user with index: " + index + " doesn't exist");
         } else {
+            
             return users[index];
         }
     }

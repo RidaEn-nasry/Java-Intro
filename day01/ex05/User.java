@@ -7,8 +7,7 @@ class User {
 
     public User(String name, double balance) {
         if (balance < 0) {
-            System.err.println("Balance cannot be negative");
-            System.exit(-1);
+            throw new IllegalArgumentException("Balance can't be negative");
         }
         this.balance = balance;
         this.name = name;

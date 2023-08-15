@@ -9,11 +9,8 @@ class Program {
         String profile = "prod";
         if (args.length > 0) {
             profile = args[0].split("=")[1];
-
         }
-
         Menu menu = new Menu();
         menu.run(profile);
-
     }
 }

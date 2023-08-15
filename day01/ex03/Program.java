@@ -42,10 +42,10 @@ class Program {
             System.out.println(e.getMessage());
         }
 
-        UUID nonExistingId = UUID.randomUUID();
+        // UUID nonExistingId = UUID.randomUUID();
         // removing a non-existing transaction by id
         try {
-            transactions.removeTransactionById(nonExistingId);
+            transactions.removeTransactionById(id);
         } catch (TransactionNotFoundException e) {
             System.out.println(e.getMessage());
         }

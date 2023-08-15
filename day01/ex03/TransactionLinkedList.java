@@ -29,20 +29,22 @@ class TransactionLinkedList implements TransactionsList {
 
     public void removeTransactionById(UUID id) {
         Node node = head;
-        while (node.next.next != null) {
+        Node prev = null;
+        while (node != null) {
             if (node.val.getId().equals(id)) {
-                node.next = node.next.next;
-                break;
+                if (prev == null) {
+                    head = node.next;
+                } else {
+                    prev.next = node.next;
+                }
+                len -= 1;
+                return;
             }
+            prev = node;
             node = node.next;
         }
-        if (!node.val.getId().equals(id)) {
-            throw new TransactionNotFoundException("transaction with id: " + id + " doesn't exist");
-        } else {
-            node.next = null;
-            len -= 1;
-        }
     };
+    
 
     public Transaction[] toArray() {
         Transaction[] transactions = new Transaction[len];
