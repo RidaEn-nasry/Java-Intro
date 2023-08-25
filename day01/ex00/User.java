@@ -5,7 +5,6 @@ class User {
     private String name;
     private double balance;
 
-
     public User(String name, double balance) {
         if (balance < 0) {
             System.err.println("Balance cannot be negative");
@@ -27,7 +26,6 @@ class User {
     public String getName() {
         return this.name;
     }
-
 
 
 }

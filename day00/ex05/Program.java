@@ -15,7 +15,6 @@ class Program {
         return -1;
     }
 
-
     public static String trim(String str) {
         char[] chars = str.toCharArray();
         String result = "";
@@ -92,12 +91,13 @@ class Program {
         }
 
         // Populating a timetable
-        // String[] times = { "1", "2", "3", "4", "5", "6" };
         String[] days = { "TU", "WE", "TH", "FR", "SA", "SU", "MO" };
-        int[] times = {1, 2,3,4,5,6};
+        int[] times = { 1, 2, 3, 4, 5, 6 };
         /*
          * storing the schedule of up to 10 classes, each row contains the time and day
-         * indices
+         * 50 is the max number of classess, calculated as (max number of classes per
+         * week) * (max number of weeks in a month)
+         * 10 * 5 = 50
          */
 
         int[][] classes = new int[50][2];
@@ -110,7 +110,7 @@ class Program {
             } else { // assuming that format of input is "time day"
                 String[] parts = split(input, ' ');
                 int t = parseInt(parts[0]);
-                String d = parts[1]; 
+                String d = parts[1];
                 classes[m][0] = findIndex(days, d); // storing the day index
                 classes[m][1] = t - 1; // storing the time index
                 m++;
@@ -128,7 +128,6 @@ class Program {
         // Iterate over the classes array and fill in the schedule array with the
         // occurrences of each class
 
-
         // classes
         for (int i = 0; i < m; i++) {
             int dayIndex = classes[i][0];
@@ -145,26 +144,26 @@ class Program {
         // populating the attendance
 
         int[][][] attendanceStatuses = new int[n][30][6];
-
         // first filling all indexes where schedule is not zero
         for (int i = 0; i < weeksInMonth; i++) {
             for (int j = 0; j < 7; j++) {
                 for (int z = 0; z < 6; z++) {
 
-                if (schedule[i][j][z] != 0) {
-                    int dayIndex = (schedule[i][j][6]) - 1;
-                    // System.out.println("day index is " + dayIndex);
-                    // int timeIndex = schedule[i][j][1];
-                    // int dayInMonth = schedule[i][j][0];
-                    for (int k = 0; k < n; k++) {
-                        attendanceStatuses[k][dayIndex][z] = -2;
+                    if (schedule[i][j][z] != 0) {
+                        int dayIndex = (schedule[i][j][6]) - 1;
+                        // System.out.println("day index is " + dayIndex);
+                        // int timeIndex = schedule[i][j][1];
+                        // int dayInMonth = schedule[i][j][0];
+                        for (int k = 0; k < n; k++) {
+                            attendanceStatuses[k][dayIndex][z] = -2;
+                        }
                     }
-                }
                 }
             }
         }
 
-        int index = 0;
+
+
         while (true) {
             String input = sc.nextLine();
             if (input.equals(".")) {
@@ -176,21 +175,21 @@ class Program {
                 int dayIndex = (parseInt(parts[2]) - 1) % 7;
                 int dayInMonth = parseInt(parts[2]);
                 for (int i = 0; i < weeksInMonth; i++) {
-                    // if (schedule[i][dayIndex][6] == dayInMonth && schedule[i][dayIndex][1] == timeIndex) {
-                        if (schedule[i][dayIndex][6] == dayInMonth) {
-                            for (int z = 0; z < 6; z++) {
-                                if (schedule[i][dayIndex][z] == times[timeIndex]) {
-                                    attendanceStatuses[studentIndex][dayInMonth - 1][z] = parts[3].equals("HERE") ? 1 : -1;
-                                }
+                    // if (schedule[i][dayIndex][6] == dayInMonth && schedule[i][dayIndex][1] ==
+                    // timeIndex) {
+                    if (schedule[i][dayIndex][6] == dayInMonth) {
+                        for (int z = 0; z < 6; z++) {
+                            if (schedule[i][dayIndex][z] == times[timeIndex]) {
+                                attendanceStatuses[studentIndex][dayInMonth - 1][z] = parts[3].equals("HERE") ? 1 : -1;
                             }
                         }
+                    }
                 }
             }
         }
 
-        // for (int i =0; i < t)
 
-        // printing stuff in the above format
+        // printing stuff
         int firstTime = 0;
         for (int i = 0; i < weeksInMonth; i++) {
             for (int j = 0; j < 7; j++) {
@@ -205,7 +204,8 @@ class Program {
                     // if first time we're printing ever, print a space before
                     for (int z = 0; z < 6; z++) {
                         if (schedule[i][j][z] != 0) {
-                            System.out.print(times[z] + ":00 " + days[dayIndex] + " " + schedule[i][j][6] + "|");
+                            System.out.pri
+                            // System.out.print(times[z] + ":00 " + days[dayIndex] + " " + schedule[i][j][6] + "|");
                         }
                     }
                 }
@@ -219,22 +219,22 @@ class Program {
             hey += 1;
             System.out.print(names[i] + " ");
             for (int j = 0; j < 30; j++) {
-                for (int z = 0; z < 6; z++)  {
-                if (attendanceStatuses[i][j][z] != 0) {
-                    if (j > 9) {
-                        System.out.print("         ");
-                    } else {
-                        System.out.print("      ");
+                for (int z = 0; z < 6; z++) {
+                    if (attendanceStatuses[i][j][z] != 0) {
+                        if (j > 9) {
+                            System.out.print("         ");
+                        } else {
+                            System.out.print("      ");
+                        }
+                        // System.out.print(" ");
+                        if (attendanceStatuses[i][j][z] == 1) {
+                            System.out.print(" 1|");
+                        } else if (attendanceStatuses[i][j][z] == -1) {
+                            System.out.print("-1|");
+                        } else {
+                            System.out.print("  |");
+                        }
                     }
-                    // System.out.print(" ");
-                    if (attendanceStatuses[i][j][z] == 1) {
-                        System.out.print(" 1|");
-                    } else if (attendanceStatuses[i][j][z] == -1) {
-                        System.out.print("-1|");
-                    } else {
-                        System.out.print("  |");
-                    }
-                }
                 }
             }
             System.out.println("");

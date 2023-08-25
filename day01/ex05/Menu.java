@@ -199,21 +199,29 @@ class Menu {
                         System.out.println("Please enter a valid user ID and transfer ID");
                         continue;
                     }
-                    removeTransfer(userId, UUID.fromString(transferId));
+                    try {
+                        removeTransfer(userId, UUID.fromString(transferId));
+                    } catch (Exception e) {
+                        System.out.println("Please enter a valid user ID and transfer ID");
+                        continue;
+                    }
                 }
             } else if (choice == 6) {
                 if (!profile.equals("dev")) {
                     System.out.println("\nThis option is only available in dev mode, run with --profile=dev\n");
                     continue;
                 }
-                checkTransferValidity();
-
+                try {
+                    checkTransferValidity();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    continue;
+                }
             } else if (choice == 7) {
                 break;
             }
             System.out.println("---------------------------------------------------------");
         }
-
     }
 
 }

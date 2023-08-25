@@ -22,13 +22,9 @@ class Program {
         }
 
         // get the scale factor of the histogram
-        int scale = 1;
+        double scale = 1;
         if (maxCount > 10) {
-            scale = maxCount / 10;
-            // if the max count is not divisible by 10, increase the scale factor by 1
-            if (maxCount % 10 != 0) {
-                scale++;
-            }
+            scale = (double) maxCount / 10.0;
         }
 
         char[] chars = new char[10];
@@ -56,7 +52,7 @@ class Program {
                 if (chars[j] == 0) {
                     continue;
                 }
-                if ((topCounts[j] / scale) + 1 == i) {
+                if ((int) ((topCounts[j] / scale) + 1) == i) {
                     System.out.print(topCounts[j] + " ");
                 } else if (topCounts[j] / scale >= i) {
                     System.out.print("# ");

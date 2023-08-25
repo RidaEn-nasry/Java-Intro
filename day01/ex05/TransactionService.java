@@ -25,9 +25,9 @@ class TransactionService {
         if (sender.getBalance() < amount) {
             throw new IllegalTransactionException("Not enough money");
         }
-        Transaction debit = new Transaction(sender, recipient, TransferCat.DEBIT, amount);
-        sender.addTransaction(debit);
-        recipient.addTransaction(debit);
+        Transaction transc = new Transaction(sender, recipient, TransferCat.DEBIT, amount);
+        sender.addTransaction(transc);
+        recipient.addTransaction(transc);
     }
 
     public Transaction[] getUserTransactions(int userId) {
@@ -62,7 +62,7 @@ class TransactionService {
                         break;
                     }
                 }
-                if (found == false) {
+                if (!found) {
                     unpairedTransactions.addTransaction(transactions[j]);
                 }
             }

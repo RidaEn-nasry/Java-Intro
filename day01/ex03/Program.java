@@ -31,8 +31,6 @@ class Program {
             System.out.println();
         }
 
-
-    
         // removing a transaction by id
         UUID id = transactionsArr2[4].getId();
 
@@ -42,14 +40,13 @@ class Program {
             System.out.println(e.getMessage());
         }
 
-        // UUID nonExistingId = UUID.randomUUID();
-        // removing a non-existing transaction by id
+        // retrieving a transaction by non-existing id
+        UUID nonExistingId = UUID.randomUUID();
         try {
-            transactions.removeTransactionById(id);
+            transactions.removeTransactionById(nonExistingId);
         } catch (TransactionNotFoundException e) {
             System.out.println(e.getMessage());
         }
-
         System.out.println();
     }
 }

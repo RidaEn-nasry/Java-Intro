@@ -1,10 +1,13 @@
 
+enum transferCategoryEnum {
+    debits,
+    credits
+}
 
 class User {
     final private int id;
     private String name;
     private double balance;
-
 
     public User(String name, double balance) {
         if (balance < 0) {
@@ -22,7 +25,7 @@ class User {
 
     public double getBalance() {
         return this.balance;
-    }    
+    }
 
     public void setBalance(double amount) {
         this.balance += amount;

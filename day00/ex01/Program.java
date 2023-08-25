@@ -40,6 +40,5 @@ class Program {
         }
         input.close();
         System.exit(0);
-
     }
 }

@@ -43,6 +43,7 @@ class TransactionLinkedList implements TransactionsList {
             prev = node;
             node = node.next;
         }
+        throw new TransactionNotFoundException("transaction with id: " + id + " doesn't exist");
     };
 
     public Transaction[] toArray() {
