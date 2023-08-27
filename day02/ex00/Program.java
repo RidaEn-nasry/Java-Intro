@@ -1,39 +1,46 @@
-package day03.ex00;
 
-import java.io.File;
-import java.io.FileInputStream;
+package day02.ex00;
+
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Vector;
+import java.util.Scanner;
 
 public class Program {
 
-    // get magic number from file
-    public static byte[] getMagicNumber(String fileName) throws IOException {
-        byte[] magicNumber = new byte[4];
-        FileInputStream fileInputStream = new FileInputStream(fileName);
-        fileInputStream.read(magicNumber, 0, 4);
-        fileInputStream.close();
-        return magicNumber;
-
-    }
-
-    // public static Map
-
     public static void main(String args[]) {
+        if (args.length < 1) {
+            System.err.println("Usage: java Program <file_path>");
+            System.exit(-1);
+        }
+        MagicNumberAnalyzer mgc = new MagicNumberAnalyzer(args[0]);
 
+        FileOutputStream out = null;
         try {
-            // get magic number from file
-            byte[] magicNumber = getMagicNumber(args[0]);
-            for (int i = 0; i < magicNumber.length; i++) {
-                System.out.printf("%02X ", magicNumber[i]);
-            }
+            out = new FileOutputStream("results.txt");
         } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.err.println("Error: " + e.getMessage());
+            System.exit(-1);
         }
 
+        Scanner input = new Scanner(System.in);
+        while (input.hasNext()) {
+            if (input.equals("42")) {
+                break;
+            }
+            String fileType = mgc.getFileType(input.next());
+            if (!fileType.equals("UNDIFINED")) {
+                try {
+                    out.write(fileType.getBytes());
+                } catch (IOException e) {
+                    System.err.println("Error: " + e.getMessage());
+                    System.exit(-1);
+                }
+                System.out.println("PROCESSED");
+            } else {
+                System.out.println("UNDEFINED");
+            }
+        }
+        input.close();
     }
 
 }
