@@ -2,11 +2,13 @@
 package day02.ex00;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 
 class MagicNumberAnalyzer {
     private Hashtable<String, String> signatures;
+    private FileOutputStream out;
 
     private String getLine(FileInputStream fileInputStream, boolean readAsBytes) {
         String line = "";
@@ -64,12 +66,28 @@ class MagicNumberAnalyzer {
         try {
             FileInputStream fileInputStream = new FileInputStream(filePath);
             String line = getLine(fileInputStream, true);
-
             fileType = matchMagic(line);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
         return fileType;
+    }
+
+    public void writeResult(String result) {
+        if (out == null) {
+            try {
+                out = new FileOutputStream("results.txt");
+            } catch (IOException e) {
+                System.err.println("Error: " + e.getMessage());
+                System.exit(-1);
+            }
+        }
+        try {
+            out.write((result + "\n").getBytes());
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+            System.exit(-1);
+        }
     }
 
     MagicNumberAnalyzer(String filePath) {

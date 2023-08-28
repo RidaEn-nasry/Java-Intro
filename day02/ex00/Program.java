@@ -13,28 +13,20 @@ public class Program {
             System.exit(-1);
         }
         MagicNumberAnalyzer mgc = new MagicNumberAnalyzer(args[0]);
-
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream("results.txt");
-        } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage());
-            System.exit(-1);
-        }
-
         Scanner input = new Scanner(System.in);
         while (input.hasNext()) {
-            if (input.equals("42")) {
+            String line = input.nextLine();
+            if (line.equals("42")) {
                 break;
             }
-            String fileType = mgc.getFileType(input.next());
-            if (!fileType.equals("UNDIFINED")) {
-                try {
-                    out.write(fileType.getBytes());
-                } catch (IOException e) {
-                    System.err.println("Error: " + e.getMessage());
-                    System.exit(-1);
-                }
+            String fileType = mgc.getFileType(line);
+            // file don't exist
+            if (fileType.isEmpty()) {
+                continue;
+            }
+            // we have a file type
+            else if (!fileType.equals("UNDEFINED")) {
+                mgc.writeResult(fileType);
                 System.out.println("PROCESSED");
             } else {
                 System.out.println("UNDEFINED");
@@ -42,5 +34,4 @@ public class Program {
         }
         input.close();
     }
-
 }
