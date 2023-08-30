@@ -1,8 +1,5 @@
 
 package day02.ex00;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Program {
