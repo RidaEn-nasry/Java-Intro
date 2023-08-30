@@ -17,7 +17,6 @@ class CosineSimilariy {
     private BufferedWriter out;
     // our dictionary
     private Set<String> dict;
-
     public CosineSimilariy() {
         wordFreq = new Vector<Hashtable<String, Integer>>();
         dict = new TreeSet<String>();
@@ -44,7 +43,7 @@ class CosineSimilariy {
     }
 
     // add a doc to the corpus
-    public void addDocument(String filePath) {
+    private void addDocument(String filePath) {
         if (wordFreq.size() >= 2) {
             System.out.println("Only 2 documents are allowed");
             return;
@@ -67,8 +66,13 @@ class CosineSimilariy {
             while ((line = bufferedReader.readLine()) != null) {
                 String[] tokens = line.split(" ");
                 for (String token : tokens) {
-                    dict.add(token);
-                    writeToDoc(token);
+                    if (token.length() == 0) {
+                        continue;
+                    }
+                
+                    if (dict.add(token) == true) {
+                        writeToDoc(token);
+                    }
                     if (words.get(token) == null) {
                         words.put(token, 1);
                     } else {
@@ -78,8 +82,8 @@ class CosineSimilariy {
             }
             bufferedReader.close();
         } catch (Exception e) {
-            System.out.println("Error reading file: " + filePath);
             System.err.println(e.getMessage());
+            System.exit(-1);
         }
         wordFreq.add(words);
     }
