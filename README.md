@@ -1,5 +1,9 @@
-# Java-Intro
-Into to java ecosystem! OOP, Design Patterns, Multithreading and more 
+
+This is a first toe-dip into Java, IO/Multi-threading, Spring Boot, Database access, ...
 
 
-2.5 java
+# Resources
+
+## Day 03 (Multi-Threaded Programming)
+- [Overview](https://www.freejavaguide.com/java-threads-tutorial.pdf)
+- 

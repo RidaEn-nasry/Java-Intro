@@ -8,8 +8,7 @@ class Program {
             System.exit(-1);
         }
         CosineSimilariy cs = new CosineSimilariy(args[0], args[1]);
-        System.out.printf("Similarity = %.2f\n", cs.calcuateCosSim());
+        System.out.printf("Similarity = %.2f\n", cs.calculateCosSim());
     }
 
 }
-

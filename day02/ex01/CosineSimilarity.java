@@ -17,6 +17,7 @@ class CosineSimilariy {
     private BufferedWriter out;
     // our dictionary
     private Set<String> dict;
+
     public CosineSimilariy() {
         wordFreq = new Vector<Hashtable<String, Integer>>();
         dict = new TreeSet<String>();
@@ -44,16 +45,11 @@ class CosineSimilariy {
 
     // add a doc to the corpus
     private void addDocument(String filePath) {
-        if (wordFreq.size() >= 2) {
-            System.out.println("Only 2 documents are allowed");
-            return;
-        }
-
         // if file size > 10MB, don't add it
         File file = new File(filePath);
         if (file.length() > 10000000) {
-            System.out.println("File size is too big");
-            return;
+            System.out.println("File size is too big, max size is 10MB");
+            System.exit(-1);
         }
         if (file.length() == 0) {
             wordFreq.add(null);
@@ -69,7 +65,6 @@ class CosineSimilariy {
                     if (token.length() == 0) {
                         continue;
                     }
-                
                     if (dict.add(token) == true) {
                         writeToDoc(token);
                     }
@@ -88,8 +83,10 @@ class CosineSimilariy {
         wordFreq.add(words);
     }
 
+
+
     // calcuate the cosine similarity between two specified documents
-    public double calcuateCosSim() {
+    public double calculateCosSim() {
         // one of files was empty, similarity is 0
         if (wordFreq.get(0) == null || wordFreq.get(1) == null) {
             return 0;

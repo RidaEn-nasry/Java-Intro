@@ -5,11 +5,8 @@ import java.util.Scanner;
 public class Program {
 
     public static void main(String args[]) {
-        if (args.length < 1) {
-            System.err.println("Usage: java Program <file_path>");
-            System.exit(-1);
-        }
-        MagicNumberAnalyzer mgc = new MagicNumberAnalyzer(args[0]);
+        String fileName = "signatures.txt";
+        MagicNumberAnalyzer mgc = new MagicNumberAnalyzer(fileName);
         Scanner input = new Scanner(System.in);
         while (input.hasNext()) {
             String line = input.nextLine();

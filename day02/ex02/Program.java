@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 class Program {
     public static void main(String args[]) {
-        if (args.length < 1) {
+        if (args.length < 1 || args[0].split("=").length < 2 || !args[0].split("=")[0].equals("--current-folder")) {
             System.err.println("Usage: java Program --current-folder=path/to/folder");
             System.exit(-1);
         }
