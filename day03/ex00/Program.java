@@ -1,16 +1,15 @@
 package day03.ex00;
 
+
 class Program {
 
     public static class myRunnable implements Runnable {
         private Integer runNUm = 0;
         private String word;
-
         myRunnable(Integer runNum, String word) {
             this.runNUm = runNum;
             this.word = word;
         }
-
         public void run() {
             while (runNUm-- != 0) {
                 System.out.println(word);
@@ -19,7 +18,6 @@ class Program {
     }
 
     public static void main(String[] args) {
-
         if (args.length < 1) {
             System.err.println("Usage: java Program.java --count=<number>");
             System.exit(-1);
@@ -55,3 +53,4 @@ class Program {
         }
     }
 }
+
