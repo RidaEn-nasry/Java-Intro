@@ -24,13 +24,19 @@ class Program {
 
         public void run() {
             while (num-- != 0) {
-           
-                if (this.sharedData.eggTurn) {
-                    System.out.println("Egg");
-                    this.sharedData.eggTurn = false;
-                } else {
-                    System.out.println("Hen");
-                    this.sharedData.eggTurn = true;
+                synchronized (this.sharedData) {
+                    // eggTurn should be true and executing thread should be that of Egg
+                    while (this.sharedData.eggTurn != this.word.equals("Egg")) {
+                        try {
+                            this.sharedData.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    System.out.println(this.word);
+                    this.sharedData.eggTurn = !this.sharedData.eggTurn;
+                    this.sharedData.notify();
+
                 }
             }
         }
