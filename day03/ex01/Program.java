@@ -30,7 +30,7 @@ class Program {
                         try {
                             this.sharedData.wait();
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            System.err.println("Thread have been interrupted");
                         }
                     }
                     System.out.println(this.word);

@@ -102,7 +102,7 @@ class Program {
             if (arrSize <= 0 || threadsCount <= 0) {
                 System.err.println("Err: Please provide valid argument");
                 System.exit(-1);
-            }
+        }
 
         } catch (Exception e) {
             System.err.println("Err: Please provide a valid argument");
