@@ -6,112 +6,20 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Current File",
+            "name": "Program",
             "request": "launch",
-            "mainClass": "${file}"
+            "mainClass": "Program",
+            "projectName": "Java-Intro_1b0ceea6"
         },
         {
             "type": "java",
             "name": "Program",
             "request": "launch",
-            "mainClass": "Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(1)",
-            "request": "launch",
-            "mainClass": "day00.ex00.Program",
-            "projectName": "java-push_8c2fa209",
+            "mainClass": "day03.ex02.Program",
+            "projectName": "Java-Intro_1b0ceea6",
             "args": [
-                "signatures.txt"
-            ]
-        },
-        {
-            "type": "java",
-            "name": "Program(2)",
-            "request": "launch",
-            "mainClass": "day00.ex01.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(3)",
-            "request": "launch",
-            "mainClass": "day00.ex02.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(4)",
-            "request": "launch",
-            "mainClass": "day00.ex03.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(5)",
-            "request": "launch",
-            "mainClass": "day00.ex04.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(6)",
-            "request": "launch",
-            "mainClass": "day00.ex05.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(7)",
-            "request": "launch",
-            "mainClass": "day01.ex00.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(8)",
-            "request": "launch",
-            "mainClass": "day01.ex01.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(9)",
-            "request": "launch",
-            "mainClass": "day01.ex02.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(10)",
-            "request": "launch",
-            "mainClass": "day01.ex03.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(11)",
-            "request": "launch",
-            "mainClass": "day01.ex04.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(12)",
-            "request": "launch",
-            "mainClass": "day01.ex05.Program",
-            "projectName": "java-push_8c2fa209"
-        },
-        {
-            "type": "java",
-            "name": "Program(13)",
-            "request": "launch",
-            "mainClass": "day02.ex00.Program",
-            "projectName": "java-push_8c2fa209",
-            "args": [
-                "/Users/ren-nasr/42/java-push/day02/ex00/signatures.txt"
+                "--arraySize=10",
+                "--threadsCount=5"
             ]
         }
     ]

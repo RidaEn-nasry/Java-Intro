@@ -35,7 +35,6 @@ class Program {
         }
 
         public void run() {
-
             while (urlsVec.isEmpty() == false) {
                 String file = null;
                 int index = 0;
