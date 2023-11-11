@@ -1,7 +1,7 @@
-package fr._42.printer.logic;
+package logic;
 
 import java.awt.Color;
-import fr._42.printer.logic.Bmp;
+import logic.Bmp;
 
 public class ConsolePrinter {
     private Bmp bmp;

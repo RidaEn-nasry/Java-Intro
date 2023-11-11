@@ -1,5 +1,4 @@
-package fr._42.printer.logic;
-
+package logic;
 
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -7,7 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class Bmp {
-    private int[][] pixels = new int[16][16]; 
+    private int[][] pixels = new int[16][16];
 
     public Bmp(String filePath) throws IOException {
         loadBmp(filePath);

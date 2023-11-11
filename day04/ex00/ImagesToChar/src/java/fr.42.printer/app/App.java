@@ -1,9 +1,9 @@
-package fr._42.printer.app;
+package app;
 
 import java.io.IOException;
 
-import fr._42.printer.logic.Bmp;
-import fr._42.printer.logic.ConsolePrinter;
+import logic.Bmp;
+import logic.ConsolePrinter;
 
 // i need to read the images, define the two colored images pixels and print them
 
