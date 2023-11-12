@@ -1,7 +1,5 @@
 package app;
 
-import java.io.IOException;
-
 import logic.Bmp;
 import logic.ConsolePrinter;
 
@@ -21,17 +19,16 @@ public class App {
     }
 
     public static void main(String[] args) {
-        if (args.length != 3) {
+        if (args.length != 2) {
             System.err.println(
-                    "Usage: java -cp target/fr.42.printer app.App --black=<char> --white=<char> --path=<path>");
+                    "Usage: java -cp target/fr.42.printer app.App --black=<char> --white=<char>");
             System.exit(1);
         }
-        String filePath = null;
+        String filePath = System.getProperty("user.dir") + "/target/resources/image.bmp";
         try {
             String[] argsNames = {
                     "--black",
                     "--white",
-                    "--path"
             };
             String[] argsValues = new String[args.length];
             for (int i = 0; i < args.length; i++) {
@@ -43,7 +40,6 @@ public class App {
             if (blackPixel == null || whitePixel == null) {
                 throw new IllegalArgumentException();
             }
-            filePath = argsValues[2];
             blackPixelChar = blackPixel;
             whitePixelChar = whitePixel;
         } catch (Exception e) {
