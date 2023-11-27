@@ -1,0 +1,9 @@
+fr/_42/numbers/repositories/ProductsRepository.class
+fr/_42/numbers/exceptions/AlreadyAuthenticatedException.class
+fr/_42/numbers/NumberWorker.class
+fr/_42/numbers/services/UsersServiceImpl.class
+fr/_42/numbers/repositories/ProductsRepositoryJdbcImpl.class
+fr/_42/numbers/repositories/ProductsRepositoryJdbcImpl$1.class
+fr/_42/numbers/repositories/UsersRepository.class
+fr/_42/numbers/models/Product.class
+fr/_42/numbers/models/User.class
