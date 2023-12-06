@@ -1,0 +1,6 @@
+me/ridaennasry/orm/manager/OrmManager.class
+me/ridaennasry/orm/annotations/OrmColumn.class
+me/ridaennasry/orm/annotations/OrmColumnId.class
+me/ridaennasry/orm/models/User.class
+me/ridaennasry/orm/annotations/OrmEntity.class
+me/ridaennasry/orm/app/Program.class
