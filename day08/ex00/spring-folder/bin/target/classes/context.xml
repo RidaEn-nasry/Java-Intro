@@ -5,19 +5,29 @@
 
     <bean id="preProcessorToLower" class="me.ridaennasry.PreProcessorToLowerImpl" />
     <bean id="preProcessorToUpper" class="me.ridaennasry.PreProcessorToUpperImpl" />
+
     <bean id="rendererErr" class="me.ridaennasry.RendererErrImpl">
-        <constructor-arg ref="preProcessorToUpper" />
+        <constructor-arg ref="preProcessorToLower" />
+        
     </bean>
     <bean id="rendererStandard" class="me.ridaennasry.RendererStandardImpl">
-        <constructor-arg ref="preProcessorToLower" />
+        <constructor-arg ref="preProcessorToUpper" />
     </bean>
+
     <bean id="printerWithDateTime" class="me.ridaennasry.PrinterWithDateTimeImpl">
-        <constructor-arg ref="rendererStandard" />
+        <constructor-arg ref="rendererErr" />
     </bean>
     <bean id="printerWithPrefix" class="me.ridaennasry.PrinterWithPrefixImpl">
-        <constructor-arg ref="rendererErr" />
-        <property name="prefix" value="Prefix" />
+        <constructor-arg ref="rendererStandard" />
     </bean>
+
+
+    <!-- <bean id="renderer" class="me.ridaennasry.Renderer">
+            <constructor-arg ref="preprocessor" />
+        </bean>
+        <bean id="printer" class="me.ridaennasry.Printer">
+            <constructor-arg ref="renderer" />
+        </bean> -->
 
 
 </beans>
