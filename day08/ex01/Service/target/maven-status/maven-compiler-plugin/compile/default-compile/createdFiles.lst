@@ -1,0 +1,6 @@
+fortytwo/spring/service/application/Main.class
+fortytwo/spring/service/repositories/CrudRepository.class
+fortytwo/spring/service/repositories/UsersRepositoryJdbcTemplateImpl.class
+fortytwo/spring/service/repositories/UsersRepository.class
+fortytwo/spring/service/models/User.class
+fortytwo/spring/service/repositories/UsersRepositoryJdbcImpl.class
