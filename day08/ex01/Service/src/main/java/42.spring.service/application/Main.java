@@ -11,6 +11,6 @@ public class Main {
         String jdbcUrl = "jdbc:postgresql://localhost:5432/database";
         String username = "postgres";
         String password = "qwerty007";
-        DataSource ds = new DataSource(jdbcUrl, username, password);
+        // DataSource ds = new DataSource(jdbcUrl, username, password);
     }
 }

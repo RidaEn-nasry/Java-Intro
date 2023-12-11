@@ -11,24 +11,16 @@ import java.util.List;
 import fortytwo.spring.service.models.User;
 import java.util.Optional;
 import java.util.ArrayList;
+import org.springframework.jdbc.core.JdbcTemplate;import org.springframework.jdbc.coNamedParameterJdbcTemplatere.namedparam.;
 
 public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
     private DataSource ds;
     private Connection connection;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public UsersRepositoryJdbcTemplateImpl(DataSource ds) {
         this.ds = ds;
-        try {
-            this.connection = ds.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                this.connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(ds);
     }
 
     public DataSource getDataSource() {
@@ -37,41 +29,18 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
 
     @Override
     public User findById(Long id) {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        User user = null;
-        try {
-            String sql = "SELECT * FROM users WHERE id = ?";
-            ps = this.connection.prepareStatement(sql);
-            ps = this.connection.prepareStatement(sql);
-            ps.setLong(1, id);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                user = new User(rs.getLong("id"), rs.getString("email"));
-            }
-            return user;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        
+        User user = this.namedParameterJdbcTemplate.queryForObject(
+            "SELECT * FROM users WHERE id = :id",
+            
+            User.class
+        );
         return user;
     }
 
     @Override
     public List<User> findAll() {
-        // String sql = "SELECT * from users;"
-        // return ArrayList<User>(1);
-        return new ArrayList<User>(1);
+
     }
 
     @Override

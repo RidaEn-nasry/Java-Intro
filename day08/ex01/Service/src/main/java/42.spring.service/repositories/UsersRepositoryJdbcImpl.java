@@ -16,6 +16,8 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
         this.ds = ds;
     }
 
+    // private void createTable() {
+
     public DataSource getDataSource() {
         return this.ds;
     }
