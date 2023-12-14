@@ -11,13 +11,17 @@ import java.util.List;
 import fortytwo.spring.service.models.User;
 import java.util.Optional;
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
+
     private DataSource ds;
+
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private void removeAllUser() {
@@ -26,7 +30,8 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
         namedParameterJdbcTemplate.update(sql, namedParameters);
     }
 
-    public UsersRepositoryJdbcTemplateImpl(DataSource ds) {
+    @Autowired 
+    public UsersRepositoryJdbcTemplateImpl(@Qualifier("hikariDataSource") DataSource ds) {
         this.ds = ds;
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(ds);
         // to reset the table

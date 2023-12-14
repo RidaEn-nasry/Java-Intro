@@ -1,5 +1,11 @@
 package fortytwo.spring.service.services;
 
-public class UsersService {
+import org.springframework.stereotype.Component;
+
+
+
+public interface UsersService {
+
+    public String signup(String email);
 
 }

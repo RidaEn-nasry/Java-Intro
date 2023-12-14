@@ -2,6 +2,7 @@
 package fortytwo.spring.service.repositories;
 
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import fortytwo.spring.service.repositories.UsersRepository;
 import java.util.List;
 import fortytwo.spring.service.models.User;
@@ -11,12 +12,14 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class UsersRepositoryJdbcImpl implements UsersRepository {
 
-    private DataSource ds = null;
+    private DataSource ds;
 
-    public UsersRepositoryJdbcImpl(DataSource ds) {
+    @Autowired
+    public UsersRepositoryJdbcImpl(@Qualifier("driverManagerDataSource") DataSource ds) {
         this.ds = ds;
     }
 
@@ -29,7 +32,6 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
     public DataSource getDataSource() {
