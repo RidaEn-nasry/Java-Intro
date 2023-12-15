@@ -1,11 +1,11 @@
 
-package fortytwo.spring.service.services;
+package fr.fortytwo.spring.service.services;
 
-import fortytwo.spring.service.services.UsersService;
+import fr.fortytwo.spring.service.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import fortytwo.spring.service.models.User;
-import fortytwo.spring.service.repositories.UsersRepository;
+import fr.fortytwo.spring.service.models.User;
+import fr.fortytwo.spring.service.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @Component

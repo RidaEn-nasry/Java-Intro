@@ -1,0 +1,6 @@
+/Users/ren-nasr/42/Java-Intro/day08/ex01/Service-folder/Service/src/main/java/42.spring.service/application/Main.java
+/Users/ren-nasr/42/Java-Intro/day08/ex01/Service-folder/Service/src/main/java/42.spring.service/repositories/UsersRepositoryJdbcImpl.java
+/Users/ren-nasr/42/Java-Intro/day08/ex01/Service-folder/Service/src/main/java/42.spring.service/repositories/UsersRepository.java
+/Users/ren-nasr/42/Java-Intro/day08/ex01/Service-folder/Service/src/main/java/42.spring.service/repositories/UsersRepositoryJdbcTemplateImpl.java
+/Users/ren-nasr/42/Java-Intro/day08/ex01/Service-folder/Service/src/main/java/42.spring.service/repositories/CrudRepository.java
+/Users/ren-nasr/42/Java-Intro/day08/ex01/Service-folder/Service/src/main/java/42.spring.service/models/User.java

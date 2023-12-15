@@ -1,14 +1,14 @@
 
-package fortytwo.spring.service.repositories;
+package fr.fortytwo.spring.service.repositories;
 
-import fortytwo.spring.service.repositories.UsersRepositoryJdbcTemplateImpl;
+import fr.fortytwo.spring.service.repositories.UsersRepositoryJdbcTemplateImpl;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
-import fortytwo.spring.service.models.User;
+import fr.fortytwo.spring.service.models.User;
 import java.util.Optional;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;

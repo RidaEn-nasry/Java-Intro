@@ -1,4 +1,4 @@
-package fortytwo.spring.service.repositories;
+package fr.fortytwo.spring.service.repositories;
 
 import java.util.List;
 

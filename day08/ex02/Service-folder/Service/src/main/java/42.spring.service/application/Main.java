@@ -1,4 +1,4 @@
-package fortytwo.spring.service.application;
+package fr.fortytwo.spring.service.application;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -8,17 +8,17 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
-import fortytwo.spring.service.models.User;
-import fortytwo.spring.service.repositories.UsersRepository;
-import fortytwo.spring.service.repositories.UsersRepositoryJdbcImpl;
-import fortytwo.spring.service.repositories.UsersRepositoryJdbcTemplateImpl;
+import fr.fortytwo.spring.service.models.User;
+import fr.fortytwo.spring.service.repositories.UsersRepository;
+import fr.fortytwo.spring.service.repositories.UsersRepositoryJdbcImpl;
+import fr.fortytwo.spring.service.repositories.UsersRepositoryJdbcTemplateImpl;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import fortytwo.spring.service.config.ApplicationConfig;
-import fortytwo.spring.service.services.UsersServiceImpl;
-import fortytwo.spring.service.services.UsersService;
+import fr.fortytwo.spring.service.config.ApplicationConfig;
+import fr.fortytwo.spring.service.services.UsersServiceImpl;
+import fr.fortytwo.spring.service.services.UsersService;
 
 public class Main {
 

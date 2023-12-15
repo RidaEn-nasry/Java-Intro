@@ -1,5 +1,5 @@
 
-package fortytwo.spring.service.config;
+package fr.fortytwo.spring.service.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariDataSource;
 
-import fortytwo.spring.service.services.UsersService;
+import fr.fortytwo.spring.service.services.UsersService;
 
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.context.annotation.ComponentScan;
 
 @PropertySource("classpath:db.properties")
 @Configuration
-@ComponentScan(basePackages = "fortytwo.spring.service")
+@ComponentScan(basePackages = "fr.fotytwo.spring.service")
 public class ApplicationConfig {
 
     @Value("${db.driver.name}")

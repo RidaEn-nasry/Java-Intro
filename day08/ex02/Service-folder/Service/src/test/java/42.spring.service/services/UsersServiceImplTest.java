@@ -1,5 +1,5 @@
 
-package fortytwo.spring.service.services;
+package fr.fortytwo.spring.service.services;
 
 import javax.sql.DataSource;
 
@@ -7,9 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import fortytwo.spring.service.repositories.UsersRepository;
-import fortytwo.spring.service.services.UsersService;
-import fortytwo.spring.service.config.TestApplicationConfig;
+import fr.fortytwo.spring.service.repositories.UsersRepository;
+import fr.fortytwo.spring.service.services.UsersService;
+import fr.fortytwo.spring.service.config.TestApplicationConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

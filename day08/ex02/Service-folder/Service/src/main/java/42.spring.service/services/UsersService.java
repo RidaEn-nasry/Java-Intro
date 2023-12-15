@@ -1,4 +1,4 @@
-package fortytwo.spring.service.services;
+package fr.fortytwo.spring.service.services;
 
 public interface UsersService {
 

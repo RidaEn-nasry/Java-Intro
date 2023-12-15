@@ -1,11 +1,11 @@
 
-package fortytwo.spring.service.repositories;
+package fr.fortytwo.spring.service.repositories;
 
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import fortytwo.spring.service.repositories.UsersRepository;
+import fr.fortytwo.spring.service.repositories.UsersRepository;
 import java.util.List;
-import fortytwo.spring.service.models.User;
+import fr.fortytwo.spring.service.models.User;
 import java.util.Optional;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

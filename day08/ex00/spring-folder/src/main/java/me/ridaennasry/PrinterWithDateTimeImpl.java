@@ -1,7 +1,7 @@
-package me.ridaennasry;
+package fr.fortytwo;
 
-import me.ridaennasry.Printer;
-import me.ridaennasry.Renderer;
+import fr.fortytwo.Printer;
+import fr.fortytwo.Renderer;
 import java.time.LocalDateTime;
 
 import java.time.format.DateTimeFormatter;

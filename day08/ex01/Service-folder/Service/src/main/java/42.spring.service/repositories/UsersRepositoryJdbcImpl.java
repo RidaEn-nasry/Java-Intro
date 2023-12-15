@@ -1,17 +1,17 @@
 
-package fortytwo.spring.service.repositories;
+package fr.fortytwo.spring.service.repositories;
 
 import javax.sql.DataSource;
-import fortytwo.spring.service.repositories.UsersRepository;
+import fr.fortytwo.spring.service.repositories.UsersRepository;
 import java.util.List;
-import fortytwo.spring.service.models.User;
+import fr.fortytwo.spring.service.models.User;
 import java.util.Optional;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-
+import java.util.PriorityQueue;
 public class UsersRepositoryJdbcImpl implements UsersRepository {
 
     private DataSource ds = null;

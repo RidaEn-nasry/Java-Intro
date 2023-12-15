@@ -1,8 +1,8 @@
 
-package me.ridaennasry;
+package fr.fortytwo;
 
-import me.ridaennasry.Renderer;
-import me.ridaennasry.PreProcessor;
+import fr.fortytwo.Renderer;
+import fr.fortytwo.PreProcessor;
 
 public class RendererStandardImpl implements Renderer {
 

@@ -1,7 +1,7 @@
 
-package me.ridaennasry;
+package fr.fortytwo;
 
-import me.ridaennasry.PreProcessor;
+import fr.fortytwo.PreProcessor;
 
 public class PreProcessorToUpperImpl implements PreProcessor {
 

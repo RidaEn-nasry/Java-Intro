@@ -1,5 +1,5 @@
 
-package fortytwo.spring.service.models;
+package fr.fortytwo.spring.service.models;
 
 import java.util.Objects;
 

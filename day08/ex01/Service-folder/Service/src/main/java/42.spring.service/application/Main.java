@@ -1,4 +1,4 @@
-package fortytwo.spring.service.application;
+package fr.fortytwo.spring.service.application;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -8,10 +8,10 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
-import fortytwo.spring.service.models.User;
-import fortytwo.spring.service.repositories.UsersRepository;
-import fortytwo.spring.service.repositories.UsersRepositoryJdbcImpl;
-import fortytwo.spring.service.repositories.UsersRepositoryJdbcTemplateImpl;
+import fr.fortytwo.spring.service.models.User;
+import fr.fortytwo.spring.service.repositories.UsersRepository;
+import fr.fortytwo.spring.service.repositories.UsersRepositoryJdbcImpl;
+import fr.fortytwo.spring.service.repositories.UsersRepositoryJdbcTemplateImpl;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -59,7 +59,6 @@ public class Main {
     }
 
     private static void testUsersRepositoryJdbcImpl(UsersRepositoryJdbcImpl usersRepositoryJdbcImpl) {
-
         // testing save
         User user = new User();
         user.setEmail("testing@gmail.com");

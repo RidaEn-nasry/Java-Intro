@@ -1,0 +1,10 @@
+fr/fortytwo/PreProcessorToUpperImpl.class
+fr/fortytwo/PrinterWithPrefixImpl.class
+fr/fortytwo/RendererErrImpl.class
+fr/fortytwo/PreProcessorToLowerImpl.class
+fr/fortytwo/Printer.class
+fr/fortytwo/PrinterWithDateTimeImpl.class
+fr/fortytwo/Renderer.class
+fr/fortytwo/PreProcessor.class
+fr/fortytwo/App.class
+fr/fortytwo/RendererStandardImpl.class

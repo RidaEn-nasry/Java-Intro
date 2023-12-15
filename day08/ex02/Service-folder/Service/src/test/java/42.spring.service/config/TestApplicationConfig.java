@@ -1,5 +1,5 @@
 
-package fortytwo.spring.service.config;
+package fr.fortytwo.spring.service.config;
 
 import org.junit.jupiter.api.BeforeEach;
 
@@ -22,12 +22,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
-import fortytwo.spring.service.config.ApplicationConfig;
-import fortytwo.spring.service.services.UsersService;
+import fr.fortytwo.spring.service.config.ApplicationConfig;
+import fr.fortytwo.spring.service.services.UsersService;
 import org.springframework.context.annotation.Primary;
 
 @Configuration
-@ComponentScan(basePackages = "fortytwo.spring.service")
+@ComponentScan(basePackages = "fr.fortytwo.spring.service")
 public class TestApplicationConfig {
     private EmbeddedDatabase ds;
     private JdbcTemplate jdbcTemplate;
