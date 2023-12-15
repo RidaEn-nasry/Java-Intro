@@ -8,10 +8,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariDataSource;
+
+import fortytwo.spring.service.services.UsersService;
+
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.context.annotation.ComponentScan;
 
 @PropertySource("classpath:db.properties")
 @Configuration
+@ComponentScan(basePackages = "fortytwo.spring.service")
 public class ApplicationConfig {
 
     @Value("${db.driver.name}")
@@ -26,8 +31,7 @@ public class ApplicationConfig {
     @Value("${db.password}")
     private String password;
 
-    @Bean
-    @Qualifier("hikariDataSource")
+    @Bean(name = "hikariDataSource")
     public DataSource getHikariDataSource() {
         HikariDataSource ds = new HikariDataSource();
         ds.setDriverClassName(driverName);
@@ -37,8 +41,7 @@ public class ApplicationConfig {
         return ds;
     }
 
-    @Bean
-    @Qualifier("driverManagerDataSource")
+    @Bean(name = "driverManagerDataSource")
     public DataSource getDriverManagerDataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
         ds.setDriverClassName(driverName);

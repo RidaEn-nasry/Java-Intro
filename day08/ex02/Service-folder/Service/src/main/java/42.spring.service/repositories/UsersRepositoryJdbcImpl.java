@@ -13,23 +13,43 @@ import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
+@Component("usersRepositoryJdbcImpl")
 public class UsersRepositoryJdbcImpl implements UsersRepository {
 
     private DataSource ds;
 
     @Autowired
     public UsersRepositoryJdbcImpl(@Qualifier("driverManagerDataSource") DataSource ds) {
+        // to reset the table
         this.ds = ds;
+        this.resetDatabase();
     }
 
-    private void deleteAllUser() {
+    private void resetDatabase() {
         Connection connection = null;
-        String sql = "TRUNCATE TABLE users RESTART IDENTITY CASCADE";
-        try (Connection conn = this.ds.getConnection();
-                PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
-            preparedStatement.executeUpdate();
+        // removing and creating the tables again
+        String sql = "DROP TABLE IF EXISTS users";
+        try (Connection conn = this.ds.getConnection()) {
+            // If autocommit is false, you need to commit the transaction manually.
+            conn.setAutoCommit(false);
+
+            // Drop the existing table if it exists
+            try (PreparedStatement preparedStatement = conn.prepareStatement("DROP TABLE IF EXISTS users")) {
+                preparedStatement.executeUpdate();
+            }
+
+            // Create the new table
+            try (PreparedStatement preparedStatement = conn.prepareStatement(
+                    "CREATE TABLE users (id SERIAL PRIMARY KEY, email VARCHAR(255), password VARCHAR(255));")) {
+                preparedStatement.executeUpdate();
+            }
+
+            // Commit the changes to the database
+            conn.commit();
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -51,6 +71,7 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
                 user = new User();
                 user.setId(resultSet.getLong("id"));
                 user.setEmail(resultSet.getString("email"));
+                user.setPassword(resultSet.getString("password"));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -72,6 +93,7 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
                 User user = new User();
                 user.setId(resultSet.getLong("id"));
                 user.setEmail(resultSet.getString("email"));
+                user.setPassword(resultSet.getString("password"));
                 users.add(user);
             }
         } catch (SQLException e) {
@@ -84,10 +106,11 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
     @Override
     public void save(User user) {
         Connection connection = null;
-        String sql = "INSERT INTO users (email) VALUES (?)";
+        String sql = "INSERT INTO users (email, password) VALUES (?, ?)";
         try (Connection conn = this.ds.getConnection();
                 PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, user.getEmail());
+            preparedStatement.setString(2, user.getPassword());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -96,12 +119,13 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
 
     @Override
     public void update(User user) {
-        String sql = "UPDATE users SET email = ? WHERE id = ?";
+        String sql = "UPDATE users SET email = ?, password = ? WHERE id = ?";
         Connection connection = null;
         try (Connection conn = this.ds.getConnection();
                 PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, user.getEmail());
-            preparedStatement.setLong(2, user.getId());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setLong(3, user.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -134,6 +158,7 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
                 user = new User();
                 user.setId(resultSet.getLong("id"));
                 user.setEmail(resultSet.getString("email"));
+                user.setPassword(resultSet.getString("password"));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
