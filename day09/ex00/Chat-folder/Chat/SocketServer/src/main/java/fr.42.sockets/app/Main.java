@@ -11,8 +11,11 @@ import fr.fortytwo.sockets.server.services.UsersServiceImpl;
 import fr.fortytwo.sockets.server.config.SocketsApplicationConfig;
 import fr.fortytwo.sockets.server.repositories.UsersRepository;
 import fr.fortytwo.sockets.server.repositories.UsersRepositoryImpl;
+import fr.fortytwo.sockets.server.server.Server;
 import fr.fortytwo.sockets.server.services.UsersService;
 import fr.fortytwo.sockets.server.models.User;
+
+import java.net.ServerSocket;
 import java.util.List;
 
 public class Main {
@@ -53,14 +56,22 @@ public class Main {
         } catch (Exception e) {
             System.err.println("ERR: " + e.getMessage());
             e.printStackTrace();
-
         }
 
     }
 
     public static void main(String[] args) {
         ApplicationContext context = new AnnotationConfigApplicationContext(SocketsApplicationConfig.class);
-        UsersService userService = context.getBean(UsersService.class, "usersServiceImpl");
-        userService.signup("rida","passcode");
+        String[] argument = args[0].split("=");
+        if (args.length != 1 || !argument[0].equals("--port")) {
+            System.err.println("Usage: java Main <port>");
+            System.exit(1);
+        }
+        int port = Server.parsePort(argument[1]);
+        ServerSocket serverSocket = (ServerSocket) context.getBean("serverSocket");
+        // Server server = context.getBean(Server.class, "server");
+        // server.init(serverSocket);
+        // assert server.getServerSocket() != null;
+        // assert server.getUsersService() != null;
     }
 }

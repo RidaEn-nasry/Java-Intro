@@ -1,18 +1,21 @@
 
 package fr.fortytwo.sockets.server.config;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.jdbc.core.JdbcTemplate;
+
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
@@ -49,7 +52,13 @@ public class SocketsApplicationConfig {
     }
 
     @Bean("jdbcTemplate")
-    public JdbcTemplate getNamedParameterJdbcTemplate() {
+    public JdbcTemplate getJdbcTemplate() {
         return new JdbcTemplate(getHikariDataSource());
+    }
+
+    @Bean("serverSocket")
+    public ServerSocket getServerSocket() throws IOException, IllegalArgumentException {
+        System.out.println(System.getProperties());
+        return new ServerSocket();
     }
 }
