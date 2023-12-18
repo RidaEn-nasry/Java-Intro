@@ -4,12 +4,13 @@ package fr.fortytwo.sockets.server.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import fr.fortytwo.sockets.server.models.User;
 import fr.fortytwo.sockets.server.repositories.UsersRepository;
 import fr.fortytwo.sockets.server.services.UsersService;
 
-@Component("usersServiceImpl")
+@Service("usersServiceImpl")
 public class UsersServiceImpl implements UsersService {
 
     @Autowired

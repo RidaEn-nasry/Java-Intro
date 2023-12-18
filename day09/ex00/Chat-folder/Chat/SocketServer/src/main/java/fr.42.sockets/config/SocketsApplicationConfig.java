@@ -22,7 +22,6 @@ import com.zaxxer.hikari.HikariDataSource;
 @ComponentScan("fr.fortytwo.sockets.server")
 @PropertySource("classpath:db.properties")
 public class SocketsApplicationConfig {
-
     @Value("${db.url}")
     private String dbUrl;
 
@@ -56,9 +55,17 @@ public class SocketsApplicationConfig {
         return new JdbcTemplate(getHikariDataSource());
     }
 
+    private int parsePort(String str) throws IllegalArgumentException {
+        int port = Integer.parseInt(str);
+        if (port < 0 || port > 65535) {
+            throw new IllegalArgumentException("Valid range values for port are 0-65535");
+        }
+        return port;
+    }
+
     @Bean("serverSocket")
     public ServerSocket getServerSocket() throws IOException, IllegalArgumentException {
-        System.out.println(System.getProperties());
-        return new ServerSocket();
+        int port = parsePort(System.getProperty("server.port"));
+        return new ServerSocket(port);
     }
 }

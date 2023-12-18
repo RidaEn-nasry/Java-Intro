@@ -9,13 +9,15 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import java.sql.ResultSet;
 import fr.fortytwo.sockets.server.repositories.UsersRepository;
 import fr.fortytwo.sockets.server.models.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-@Component("usersRepositoryImpl")
+@Repository("usersRepositoryImpl")
 public class UsersRepositoryImpl implements UsersRepository {
 
     private DataSource ds;

@@ -1,7 +1,9 @@
 
 package fr.fortytwo.sockets.server.models;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     Long id;
     String name;
     String password;
@@ -52,6 +54,17 @@ public class User {
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        User user = (User) obj;
+        return this.id == user.getId() && this.name.equals(user.getName()) && this.password.equals(user.getPassword());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode() + this.name.hashCode() + this.password.hashCode();
     }
 
 }
