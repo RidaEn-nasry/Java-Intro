@@ -75,6 +75,7 @@ public class Main {
             server.initServer();
         } catch (Exception e) {
             System.err.println("Err: " + e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
 

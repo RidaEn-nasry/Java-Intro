@@ -5,3 +5,4 @@
 [x] overview about spring security
 [x] study the bcrypt hashing algorithm
 [ ] learn about thread pool 
+

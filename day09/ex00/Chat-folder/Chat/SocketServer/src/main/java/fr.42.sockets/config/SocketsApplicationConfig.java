@@ -47,6 +47,7 @@ public class SocketsApplicationConfig {
         ds.setUsername(dbUser);
         ds.setPassword(password);
         ds.setDriverClassName(driverClassName);
+        assert ds != null;
         return ds;
     }
 
