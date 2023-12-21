@@ -7,7 +7,9 @@ import java.util.Scanner;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 
-import fr.fortytwo.sockets.client.models.User;
+import fr.fortytwo.sockets.models.User;
+
+// import fr.fortytwo.sockets.server.models.User;
 
 public class AuthenticationClient {
 
@@ -28,11 +30,6 @@ public class AuthenticationClient {
         return null;
     }
 
-    private void sendUser(User user, Socket socket) throws IOException, ClassNotFoundException {
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        objectOutputStream.writeObject(user);
-    }
-
     public AuthenticationClient(Socket socket) {
         this.socket = socket;
         String line = null;
@@ -46,6 +43,11 @@ public class AuthenticationClient {
         }
     }
 
+    private void sendUser(User user, Socket socket) throws IOException, ClassNotFoundException {
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+        objectOutputStream.writeObject(user);
+    }
+
     public User parseUserDetails(Scanner scanner) throws IOException {
         System.out.println("Enter username: ");
         System.out.print("> ");
@@ -55,7 +57,6 @@ public class AuthenticationClient {
         String password = scanner.nextLine();
         User user = new User(name, password);
         return user;
-
     }
 
     public void start() {
@@ -67,12 +68,12 @@ public class AuthenticationClient {
                 case "signUp":
                     User user = parseUserDetails(scanner);
                     sendUser(user, socket);
-                    // System.out.println("Hey");
+                    String response = getLineFromServer(socket);
+                    System.out.println(response);
                     break;
                 default:
                     System.out.println("Please provide a valid command");
                     start();
-                    // throw new IllegalArgumentException("Please provide a valid command");
 
             }
         } catch (Exception e) {

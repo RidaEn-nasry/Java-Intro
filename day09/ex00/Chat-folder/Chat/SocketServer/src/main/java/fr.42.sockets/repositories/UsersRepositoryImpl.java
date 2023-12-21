@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import fr.fortytwo.sockets.server.repositories.UsersRepository;
-import fr.fortytwo.sockets.server.models.User;
+import fr.fortytwo.sockets.models.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -38,7 +38,8 @@ public class UsersRepositoryImpl implements UsersRepository {
     private void resetDatabase() {
         // removing and creating the tables again
         this.jdbcTemplate.execute("DROP TABLE IF EXISTS users");
-        this.jdbcTemplate.execute("CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR(50), password VARCHAR(50))");
+        this.jdbcTemplate
+                .execute("CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR(50), password VARCHAR(200))");
     }
 
     private class UserRowMapper implements RowMapper {
@@ -61,7 +62,9 @@ public class UsersRepositoryImpl implements UsersRepository {
     @Override
     public List<User> findAll() {
         String sql = "SELECT * FROM users";
-        List<User> users = this.jdbcTemplate.query("SELECT * FROM users", new UserRowMapper());
+
+        List<User> users = this.jdbcTemplate.query(sql, new UserRowMapper());
+        // this.jdbcTemplate.query("SELECT * FROM users", new UserRowMapper());
         return users;
     }
 

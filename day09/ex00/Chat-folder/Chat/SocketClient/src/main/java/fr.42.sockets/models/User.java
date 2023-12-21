@@ -1,15 +1,20 @@
-package fr.fortytwo.sockets.client.models;
+package fr.fortytwo.sockets.models;
 
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private String name;
-    private String password;
-    private Long id;
+    Long id;
+    String name;
+    String password;
 
     public User() {
-        this.name = "";
-        this.password = "";
+
+    }
+
+    public User(Long id, String name, String password) {
+        this.id = id;
+        this.password = password;
+        this.name = name;
     }
 
     public User(String name, String password) {
@@ -17,53 +22,37 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public User(User user) {
-        this.name = user.getName();
-        this.password = user.getPassword();
+    public Long getId() {
+        return this.id;
     }
 
-    public User(String name, String password, Long id) {
-        this.name = name;
-        this.password = password;
+    public void setId(Long id) {
         this.id = id;
     }
 
     public String getName() {
-        return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Long getId() {
-        return id;
+        return this.name;
     }
 
     public void setName(String name) {
-        if (name.length() == 0) {
-            throw new IllegalArgumentException("Please provide a non-empty name");
-        }
         this.name = name;
     }
 
-    public void setPassword(String password) {
-        if (password.length() == 0) {
-            throw new IllegalArgumentException("Please provide a non-empty password");
-        }
-        this.password = password;
+    public String getPassword() {
+        return this.password;
     }
 
-    public void setId(Long id) {
-        if (id < 0) {
-            throw new IllegalArgumentException("Please provide a non-negative id");
-        }
-        this.id = id;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
     public String toString() {
-        return "User [name=" + name + ", password=" + password + ", id=" + id + "]";
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 
     @Override

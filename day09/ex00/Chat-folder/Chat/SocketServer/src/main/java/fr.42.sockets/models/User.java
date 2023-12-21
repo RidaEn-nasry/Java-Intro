@@ -1,5 +1,5 @@
 
-package fr.fortytwo.sockets.server.models;
+package fr.fortytwo.sockets.models;
 
 import java.io.Serializable;
 

@@ -13,7 +13,7 @@ import fr.fortytwo.sockets.server.repositories.UsersRepository;
 import fr.fortytwo.sockets.server.repositories.UsersRepositoryImpl;
 import fr.fortytwo.sockets.server.server.Server;
 import fr.fortytwo.sockets.server.services.UsersService;
-import fr.fortytwo.sockets.server.models.User;
+import fr.fortytwo.sockets.models.User;
 
 import java.net.ServerSocket;
 import java.util.List;

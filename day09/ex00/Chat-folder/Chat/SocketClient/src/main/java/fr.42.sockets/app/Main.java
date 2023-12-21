@@ -9,6 +9,8 @@ import java.lang.IllegalArgumentException;
 import java.net.Socket;
 import java.util.Scanner;
 
+// import fr.fortytwo.sockets.server.models.User;
+
 import fr.fortytwo.sockets.client.authentication.AuthenticationClient;
 
 public class Main {
@@ -36,38 +38,13 @@ public class Main {
             System.err.println("Usage: java Main <port>");
             System.exit(1);
         }
+        // User user = new User("name", "pass");
         try {
             int port = parsePort(argument[1]);
             System.setProperty("server.port", argument[1]);
             Socket socket = new Socket("127.0.0.1", port);
             AuthenticationClient authentication = new AuthenticationClient(socket);
             authentication.start();
-            // BufferedReader in = null;
-            // if (socket.isConnected()) {
-            // in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            // String line = getLineFromServer(in);
-            // System.out.println(line);
-            // }
-            // Scanner scanner = new Scanner(System.in);
-            // PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            // String line = null;
-            // switch (scanner.next()) {
-            // case: "signup":
-
-            // Scanner scanner = new Scanner(System.in);
-            // PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            // String line;
-            // while (scanner.hasNext()) {
-            // line = scanner.next();
-            // System.out.println("a new line entered: " + line);
-            // out.println(line);
-            // }
-            // BufferedReader in = new BufferedReader(new
-            // InputStreamReader(socket.getInputStream()));
-            // PrintWriter out = new PrintWriter(socket.getOutputStream());
-            // while ((line = in.readLine()) != null) {
-            // System.out.println(line);
-            // }
         } catch (Exception e) {
             System.err.println("Err: " + e.getMessage());
         }

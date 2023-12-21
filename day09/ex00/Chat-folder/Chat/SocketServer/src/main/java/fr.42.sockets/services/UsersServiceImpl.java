@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import fr.fortytwo.sockets.server.models.User;
+import fr.fortytwo.sockets.models.User;
 import fr.fortytwo.sockets.server.repositories.UsersRepository;
 import fr.fortytwo.sockets.server.services.UsersService;
 
@@ -28,7 +28,8 @@ public class UsersServiceImpl implements UsersService {
         if (name.length() == 0 || password.length() == 0) {
             throw new IllegalArgumentException("Please provide a non-empty name and password");
         }
-        User user = new User(name, password);
+        String hashedPassword = hashPassword(password);
+        User user = new User(name, hashedPassword);
         usersRepository.save(user);
     }
 }
