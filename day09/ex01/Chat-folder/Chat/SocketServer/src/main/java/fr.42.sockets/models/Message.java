@@ -14,15 +14,13 @@ public class Message implements Serializable {
     public Message() {
     }
 
-
     public Message(Long id, String msg, Date date) {
         this.id = id;
         this.msg = msg;
         this.date = date;
     }
 
-    public Message(String msg, Date date) {
-
+    public Message( String msg, Date date) {
         this.msg = msg;
         this.date = date;
     }

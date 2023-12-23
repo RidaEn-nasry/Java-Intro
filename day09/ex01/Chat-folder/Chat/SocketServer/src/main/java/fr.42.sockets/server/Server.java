@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import fr.fortytwo.sockets.models.User;
+import fr.fortytwo.sockets.server.services.MessageService;
 import fr.fortytwo.sockets.server.services.UsersService;
 
 import java.io.BufferedReader;
@@ -33,6 +34,7 @@ public class Server {
     private final Integer THREAD_POOL_NUMBER = 10;
     private final UsersService usersService;
     private final ServerSocket serverSocket;
+    private final MessageService messageService;
     // user name - connection thread
     private final Map<String, UserConnection> onlineClients;
     // thread pool
@@ -41,12 +43,14 @@ public class Server {
     @Autowired
     public Server(@Qualifier("serverSocket") ServerSocket serverSocket,
             @Qualifier("usersServiceImpl") UsersService usersService, 
-            @Qualifier("executorService") ExecutorService executorService
+            @Qualifier("executorService") ExecutorService executorService,
+            @Qualifier("messageServiceImpl") MessageService messageService
             ) {
         this.serverSocket = serverSocket;
         this.usersService = usersService;
         this.onlineClients = new ConcurrentHashMap<>();
         this.executorService = executorService;
+        this.messageService = messageService;
     }
 
     public void initServer() {
@@ -77,10 +81,13 @@ public class Server {
 
     // broadcasting messages to online clients
     public void broadcastMessage(String sender, String message) {
+        System.out.println("We're saving the message");
+        String exactMessage = message.substring(message.indexOf("@") + 1);
+        messageService.saveMessage(exactMessage);
         for (UserConnection connection : onlineClients.values()) {
             // if not the sender, send the message
             if (!connection.getUser().getName().equals(sender)) {
-                connection.sendMessageToClient(sender + ": " + message.substring(message.indexOf("@") + 1));
+                connection.sendMessageToClient(sender + ": " + exactMessage);
             }
         }
     }
@@ -114,7 +121,6 @@ public class Server {
         @Override
         public void run() {
             try {
-
                 initializeConnection();
                 // Send greeting to the client
                 sendMessageToClient("Hello from server!");
@@ -197,7 +203,6 @@ public class Server {
 
         private void chat() throws IOException {
             String message = in.readLine();
-
             server.broadcastMessage(currentUser.getName(), message);
         }
 

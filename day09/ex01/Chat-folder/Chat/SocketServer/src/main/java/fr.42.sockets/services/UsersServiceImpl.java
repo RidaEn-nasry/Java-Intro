@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import fr.fortytwo.sockets.models.User;
+import fr.fortytwo.sockets.server.repositories.CrudRepository;
 import fr.fortytwo.sockets.server.repositories.UsersRepository;
 import fr.fortytwo.sockets.server.services.UsersService;
 
@@ -36,7 +36,6 @@ public class UsersServiceImpl implements UsersService {
         } catch (Exception e) {
             // user's doesn't exist, it's ok
         }
-
         if (user != null) {
             System.out.println("User already exists: " + user);
             throw new IllegalArgumentException("User already exists");
