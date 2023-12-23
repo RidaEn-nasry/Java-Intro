@@ -32,7 +32,7 @@ public class UsersRepositoryImpl implements UsersRepository {
         this.ds = ds;
         this.jdbcTemplate = jdbcTemplate;
         // to reset the table
-        this.resetDatabase();
+        // this.resetDatabase();
     }
 
     public DataSource getDataSource() {

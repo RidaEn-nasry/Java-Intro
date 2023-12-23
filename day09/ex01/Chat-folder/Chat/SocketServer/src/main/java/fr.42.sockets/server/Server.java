@@ -20,181 +20,221 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
-
-import javax.swing.text.html.Option;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import java.util.HashMap;
 
 @Component("server")
 public class Server {
-    private UsersService usersService;
-    private ServerSocket serverSocket;
-    // set of all clients id and their sockets
-    Map<Long, Socket> onlineClients = new HashMap<Long, Socket>();
 
-    public Server() {
-
-    }
-
-    private class UserThread extends Thread {
-        private User user;
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-
-        private String readLineFromSocket() throws IOException {
-            if (socket != null && socket.isConnected()) {
-                try {
-                    String line = in.readLine();
-                    return line;
-                } catch (IOException e) {
-                    System.err.println("Err " + e.getMessage());
-                }
-            } else {
-                System.err.println("Err: Socket hangup.");
-                System.exit(1);
-            }
-            return null;
-        }
-
-        private void writeLineToSocket(String msg) {
-            if (socket != null && socket.isConnected()) {
-                out.println(msg);
-            } else {
-                System.err.println("Err: Socket hangup.");
-                System.exit(1);
-            }
-        }
-
-        public UserThread(Socket socket) {
-            try {
-                this.socket = socket;
-                out = new PrintWriter(socket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out.println("Hello from server!");
-            } catch (IOException e) {
-                System.err.println("Err: " + e.getMessage());
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-
-        private Object readObjectFromSocket() throws IOException, ClassNotFoundException {
-            // if there's an incoming object, we will read it
-            InputStream inputStream = socket.getInputStream();
-            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            Object object = objectInputStream.readObject();
-            return object;
-
-        }
-
-        private Optional<User> signInUser() throws IOException, ClassNotFoundException {
-            Object object = readObjectFromSocket();
-            if (object instanceof User) {
-                try {
-                    User prospect = (User) object;
-                    this.user = usersService.signin(prospect.getName(), prospect.getPassword());
-                    return Optional.of(this.user);
-                } catch (Exception e) {
-                    System.err.println("Err: " + e.getMessage());
-                }
-            }
-            return Optional.empty();
-        }
-
-        private Optional<User> signUpUser() throws IOException, ClassNotFoundException {
-            Object obj = readObjectFromSocket();
-            if (obj instanceof User) {
-                try {
-                    User prospect = (User) obj;
-                    User user = usersService.signup(prospect.getName(), prospect.getPassword());
-                    return Optional.of(user);
-                } catch (Exception e) {
-                    System.err.println("Err: " + e.getMessage());
-                }
-            }
-            return Optional.empty();
-        }
-
-        private void auth(String auth) throws IOException, ClassNotFoundException {
-            Optional<User> optionalUser;
-            String res = null;
-            if (auth == "signIn") {
-                optionalUser = signInUser();
-            } else {
-                optionalUser = signUpUser();
-            }
-            optionalUser.ifPresentOrElse((user) -> {
-                this.user = user;
-                synchronized (onlineClients) {
-                    onlineClients.put(user.getId(), socket);
-                }
-                writeLineToSocket("Start messaging");
-                System.out.println("User is " + user.getName());
-            }, () -> {
-                writeLineToSocket("Unauthorized");
-            });
-        }
-
-        public void run() {
-            boolean exitThread = false;
-            while (!exitThread) {
-                try {
-                    String action = readLineFromSocket();
-                    switch (action) {
-                        case "signIn":
-                            auth(action);
-                            break;
-                        case "signUp":
-                            auth(action);
-                            break;
-                        case "Exit":
-                            exitThread = true;
-                            synchronized (onlineClients) {
-                                onlineClients.remove(this.user.getId());
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                } catch (Exception e) {
-                    System.err.println("Err: " + e.getMessage());
-                    e.printStackTrace();
-                    System.exit(1);
-                }
-            }
-            return;
-        }
-
-    }
+    // thread pool
+    private final Integer THREAD_POOL_NUMBER = 10;
+    private final UsersService usersService;
+    private final ServerSocket serverSocket;
+    // user name - connection thread
+    private final Map<String, UserConnection> onlineClients;
+    // thread pool
+    private ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_NUMBER);
 
     @Autowired
     public Server(@Qualifier("serverSocket") ServerSocket serverSocket,
-            @Qualifier("usersServiceImpl") UsersService usersService) throws IOException, IllegalArgumentException {
+            @Qualifier("usersServiceImpl") UsersService usersService, 
+            @Qualifier("executorService") ExecutorService executorService
+            ) {
         this.serverSocket = serverSocket;
         this.usersService = usersService;
-    }
-
-    private boolean isDataAvailable(Socket client) throws IOException {
-        return client.getInputStream().available() > 0;
+        this.onlineClients = new ConcurrentHashMap<>();
+        this.executorService = executorService;
     }
 
     public void initServer() {
-        // System.out.println("Server listening...");
-
-        // launch a new thread for each client connection
-
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 Socket client = serverSocket.accept();
-                new UserThread(client).start();
-            } catch (Exception e) {
+                System.out.println("Client connected: " + client.getInetAddress().getHostAddress());
+                UserConnection userConnection = new UserConnection(client, this);
+                executorService.submit(userConnection); // Use executor to manage thread
+            } catch (IOException e) {
                 System.err.println("Err: " + e.getMessage());
-                e.printStackTrace();
-                System.exit(1);
             }
-
         }
+    }
+
+    // adding users to the online clients map
+    public void userSignedIn(User user, UserConnection connection) {
+        onlineClients.put(user.getName(), connection);
+        System.out.println("User " + user.getName() + " signed in.");
+    }
+
+    // removing users from the online clients map
+    public void userSignedOut(User user) {
+        if (onlineClients.remove(user.getName()) != null) {
+            System.out.println("User " + user.getName() + " signed out.");
+        }
+    }
+
+    // broadcasting messages to online clients
+    public void broadcastMessage(String sender, String message) {
+        for (UserConnection connection : onlineClients.values()) {
+            // if not the sender, send the message
+            if (!connection.getUser().getName().equals(sender)) {
+                connection.sendMessageToClient(sender + ": " + message.substring(message.indexOf("@") + 1));
+            }
+        }
+    }
+
+    // Get UserService instance
+    public UsersService getUsersService() {
+        return usersService;
+    }
+
+    // UserConnection thread
+    public class UserConnection implements Runnable {
+        private final Socket socket;
+        private final Server server;
+        private BufferedReader in;
+        private PrintWriter out;
+        private ObjectInputStream objectIn;
+        private User currentUser;
+
+        public UserConnection(Socket socket, Server server) {
+            this.socket = socket;
+            this.server = server;
+        }
+
+        private void initializeConnection() throws IOException {
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            // objectIn = new ObjectInputStream(socket.getInputStream());
+            System.out.println("We're initializing connection");
+        }
+
+        @Override
+        public void run() {
+            try {
+
+                initializeConnection();
+                // Send greeting to the client
+                sendMessageToClient("Hello from server!");
+
+                while (true) {
+                    String action = in.readLine();
+                    if (action == null)
+                        break; // Client disconnected
+
+                    switch (action) {
+                        case "signIn":
+                            signIn();
+                            break;
+                        case "signUp":
+                            signUp();
+                            break;
+                        case "chat":
+                            chat();
+                            break;
+                        case "Exit":
+                            server.userSignedOut(currentUser);
+                            break;
+                        default:
+                            /// do nothing
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error in UserConnection: " + e.getMessage());
+                // Handle exception, such as closing down the connection
+            } finally {
+                if (currentUser != null) {
+                    server.userSignedOut(currentUser);
+                }
+                cleanUp();
+            }
+        }
+
+        private void signIn() throws IOException {
+            System.out.println("User wants to sign in");
+            try {
+                User user = (User) initObjectIn().readObject();
+                Optional<User> validatedUser = server.getUsersService().signin(user.getName(), user.getPassword());
+                // if user is online already send error message
+                if (onlineClients.containsKey(user.getName())) {
+                    sendMessageToClient("You're already have an active session");
+                    return;
+                }
+                authenticatedUser(validatedUser);
+            } catch (ClassNotFoundException e) {
+                sendMessageToClient("Failed to deserialize user object.");
+            } catch (Exception e) {
+                sendMessageToClient("Sign-in failed: " + e.getMessage());
+            }
+        }
+
+        private void signUp() throws IOException {
+            System.out.println("User wants to sign up");
+            try {
+                User user = (User) initObjectIn().readObject();
+                System.out.println("Object read from socket: " + user);
+                Optional<User> createdUser = server.getUsersService().signup(user.getName(), user.getPassword());
+                authenticatedUser(createdUser);
+            } catch (ClassNotFoundException e) {
+                sendMessageToClient("Failed to deserialize user object.");
+            } catch (Exception e) {
+                sendMessageToClient("Sign-up failed: " + e.getMessage());
+            }
+        }
+
+        private void authenticatedUser(Optional<User> user) {
+            System.out.println("trying to authenticate user");
+            if (user.isPresent()) {
+                this.currentUser = user.get();
+                server.userSignedIn(currentUser, this);
+                sendMessageToClient("Start messaging");
+            } else {
+                sendMessageToClient("Authentication failed.");
+            }
+        }
+
+        private void chat() throws IOException {
+            String message = in.readLine();
+
+            server.broadcastMessage(currentUser.getName(), message);
+        }
+
+        private void sendMessageToClient(String message) {
+            out.println(message);
+        }
+
+        private void cleanUp() {
+            try {
+                if (socket != null && !socket.isClosed()) {
+                    socket.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+                if (objectIn != null) {
+                    objectIn.close();
+                }
+            } catch (IOException e) {
+                System.err.println("Error cleaning up UserConnection: " + e.getMessage());
+            }
+        }
+
+        private ObjectInputStream initObjectIn() throws IOException {
+            if (objectIn == null) {
+                objectIn = new ObjectInputStream(socket.getInputStream());
+            }
+            return objectIn;
+        }
+
+        public User getUser() {
+            return currentUser;
+        }
+
     }
 
 }

@@ -69,4 +69,10 @@ public class SocketsApplicationConfig {
         int port = parsePort(System.getProperty("server.port"));
         return new ServerSocket(port);
     }
+
+    @Bean("executorService")
+    public java.util.concurrent.ExecutorService getExecutorService() {
+        return java.util.concurrent.Executors.newFixedThreadPool(10);
+    }
+
 }

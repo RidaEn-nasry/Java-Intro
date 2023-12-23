@@ -20,7 +20,6 @@ import java.util.List;
 
 public class Main {
 
- 
     public static void main(String[] args) {
         // set log level
         System.setProperty(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "Error");
@@ -36,9 +35,7 @@ public class Main {
             server.initServer();
         } catch (Exception e) {
             System.err.println("Err: " + e.getMessage());
-            e.printStackTrace();
             System.exit(1);
         }
-
     }
 }

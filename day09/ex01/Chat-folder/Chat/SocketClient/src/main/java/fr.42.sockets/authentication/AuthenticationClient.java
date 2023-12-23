@@ -10,160 +10,129 @@ import java.io.PrintWriter;
 
 import fr.fortytwo.sockets.models.User;
 
-// import fr.fortytwo.sockets.server.models.User;
-
 public class AuthenticationClient {
-
     private User user;
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
+    private ObjectOutputStream objectOutputStream;
 
-    public AuthenticationClient() {
-
-    }
-
-    private void writeLineToSocket(String msg) {
-        if (socket != null && socket.isConnected()) {
-            out.println(msg);
-        } else {
-            System.err.println("Err: Socket hangup.");
-            System.exit(1);
-        }
-    }
-
-    private String readLineFromSocket() throws IOException {
-        if (socket != null && socket.isConnected()) {
-            try {
-
-                String line = in.readLine();
-                return line;
-            } catch (IOException e) {
-                System.err.println("Err " + e.getMessage());
-            }
-        } else {
-            System.err.println("Err: Socket hangup.");
-            System.exit(1);
-        }
-        return null;
-    }
-
-    private void sendUserAction(String action) {
-        writeLineToSocket(action);
-    }
-
-    public AuthenticationClient(Socket socket) {
+    public AuthenticationClient(Socket socket) throws IOException {
         this.socket = socket;
-        String line = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println(in.readLine());
-            out = new PrintWriter(socket.getOutputStream(), true);
-        } catch (Exception e) {
-            System.err.println("Err: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(1);
+        this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+        this.out = new PrintWriter(this.socket.getOutputStream(), true);
+        // server's greeting
+        System.out.println(this.in.readLine());
+    }
+
+    private void sendUserObject(User user) throws IOException {
+        if (this.objectOutputStream == null) {
+            this.objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
         }
+        this.objectOutputStream.writeObject(user);
     }
 
-    private void sendUser(User user) throws IOException, ClassNotFoundException {
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        objectOutputStream.writeObject(user);
-    }
-
-    public User parseUserDetails(Scanner scanner) throws IOException {
+    private User promptUserDetails(Scanner scanner) {
         System.out.println("Enter username: ");
         System.out.print("> ");
-        String name = scanner.nextLine();
+        String name = scanner.nextLine().trim();
         System.out.println("Enter password: ");
         System.out.print("> ");
-        String password = scanner.nextLine();
-        User user = new User(name, password);
-        return user;
-    }
-
-    private void EnterChat() throws IOException, ClassNotFoundException {
-        System.out.println("Start messaging");
-        boolean inChat = true;
-        while (inChat) {
-            Scanner scanner = new Scanner(System.in);
-            String line = scanner.nextLine();
-            if (line.equals("Exit")) {
-                sendUserAction(line);
-                System.out.println("You have left the chat");
-                System.exit(0);
-            } else {
-                sendUserAction(line);
-                System.out.println(readLineFromSocket());
-            }
-        }
-        // Scanner scanner = new Scanner(System.in);
-        // User user = parseUserDetails(scanner);
-        // sendUser(user, socket);
-        // String response = getLineFromServer(socket);
-        // System.out.println(response);
+        String password = scanner.nextLine().trim();
+        return new User(name, password);
     }
 
     private void authorizeUser(String action, Scanner scanner) throws IOException, ClassNotFoundException {
-        sendUserAction(action);
-        sendUser(parseUserDetails(scanner));
-        if (readLineFromSocket().equals("Start messaging")) {
-            EnterChat();
+        User authUser = promptUserDetails(scanner);
+        // send user's action to the server
+        this.out.println(action);
+        // a bit of artificial delay 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+        sendUserObject(authUser);
+        String response = this.in.readLine();
+        if ("Start messaging".equals(response)) {
+            this.user = authUser;
+            enterChat(scanner);
         } else {
-            System.out.println("Wrong username or password");
-            start();
+            System.out.println(response);
+        }
+    }
+
+    private void enterChat(Scanner scanner) throws IOException {
+
+        System.out.println("Start messaging");
+
+        Thread incomingMessages = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        if (socket.getInputStream().available() > 0) {
+                            String inComingMsg = in.readLine();
+                            System.out.println();
+                            System.out.println(inComingMsg);
+                            System.out.print("> ");
+                        }
+                    } catch (IOException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                }
+            }
+        });
+        incomingMessages.start();
+        while (true) {
+            System.out.print("> ");
+            // No need to check socket's InputStream availability; BufferedReader#readLine
+            // is blocking
+            String input = scanner.nextLine().trim();
+            if ("Exit".equals(input)) {
+                this.out.println("Exit");
+                System.out.println("You have left the chat.");
+                break;
+            }
+            // send action
+            this.out.println("chat");
+            // sends name@message to the server
+            this.out.println(user.getName() + "@" + input);
         }
     }
 
     public void start() {
-
-        while (true) {
-            if (socket == null) {
-                System.out.println("Socket is null");
-                System.exit(1);
-            }
-            try {
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (true) {
                 System.out.print("> ");
-                Scanner scanner = new Scanner(System.in);
-                String line = scanner.nextLine();
-                switch (line) {
-                    case "signIn":
-                        authorizeUser(line, scanner);
-                        break;
-                    case "signUp":
-                        authorizeUser(line, scanner);
-                        break;
-                    case "Exit":
-                        sendUserAction(line);
-                        System.out.println("You have left the chat");
-                        System.exit(0);
-
-                    default:
-                        System.out.println("Please provide a valid command");
-                        start();
+                String action = "";
+                synchronized (scanner) {
+                    action = scanner.nextLine().trim();
                 }
-            } catch (Exception e) {
-                System.err.println("Err: " + e.getMessage());
-                e.printStackTrace();
-                System.exit(1);
+                if ("signIn".equals(action) || "signUp".equals(action)) {
+                    authorizeUser(action, scanner);
+                } else {
+                    System.out.println("Unknown command.");
+                }
             }
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error: " + e.getMessage());
+        } finally {
+            cleanUp();
         }
     }
 
-    public User getUser() {
-        return this.user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Socket getSocket() {
-        return this.socket;
-    }
-
-    public void setSocket(Socket socket) {
-        this.socket = socket;
+    private void cleanUp() {
+        try {
+            if (socket != null)
+                socket.close();
+            if (in != null)
+                in.close();
+            if (out != null)
+                out.close();
+        } catch (IOException e) {
+            System.err.println("Error cleaning up: " + e.getMessage());
+        }
     }
 
 }
