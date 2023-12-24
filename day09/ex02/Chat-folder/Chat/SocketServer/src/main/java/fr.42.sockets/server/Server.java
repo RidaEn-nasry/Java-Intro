@@ -27,6 +27,13 @@ import java.util.concurrent.Executors;
 import java.util.List;
 import java.util.HashMap;
 
+/*
+ * standard response from server:
+ * status: ok | notOk
+ * message: string
+ * data: object | null
+ * 
+ */
 @Component("server")
 public class Server {
 
