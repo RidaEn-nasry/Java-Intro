@@ -75,18 +75,18 @@ public class ChatroomRepositoryImpl implements ChatroomRepository {
 
     private class ChatroomMapper implements RowMapper {
         public Chatroom mapRow(ResultSet rs, int rowNum) throws SQLException {
-            List<Long> usersIds = convertSqlArrayToList(rs, "users");
-            List<User> users = getUsersFromIds(usersIds);
-            List<Long> messagesIds = convertSqlArrayToList(rs, "messages");
-            List<Message> messages = getMessagesFromIds(messagesIds);
-
             Chatroom chatroom = new Chatroom();
             chatroom.setId(rs.getLong("id"));
             chatroom.setName(rs.getString("name"));
-            chatroom.setUsers(users);
-            chatroom.setMessages(messages);
             return chatroom;
         }
+    }
+
+    // joing a user to room
+    @Override
+    public void joinUserToRoom(Long userId, String chatroomName) {
+        String SQL = "update chatrooms set users = array_append(users, ?) where name = ?";
+        jdbcTemplate.update(SQL, userId, chatroomName);
     }
 
     private class MessageMapper implements RowMapper {
@@ -103,47 +103,51 @@ public class ChatroomRepositoryImpl implements ChatroomRepository {
 
     @Override
     public List<Message> getRecentMessages(Long id, int count) {
-        // select most recent number of messages from the chatroom
         String SQL = "select * from messages where id = ? order by date desc limit ?";
-        // usign the MessageMapper to map the result to a Message object from
-        // messageRepository class
         List<Message> messages = jdbcTemplate.query(SQL, new MessageMapper(), id, count);
         return messages;
     }
 
     @Override
     public Chatroom findById(Long id) {
+        String SQL = "select * from chatrooms where id = ?";
+        Chatroom chatroom = (Chatroom) jdbcTemplate.queryForObject(SQL, new ChatroomMapper(), id);
+        return chatroom;
 
-        return null;
     }
 
     @Override
     public List<Chatroom> findAll() {
-        // TODO Auto-generated method stub
-        return null;
+        String SQL = "select * from chatrooms";
+        List<Chatroom> chatrooms = jdbcTemplate.query(SQL, new ChatroomMapper());
+        System.out.println("Chatrooms: " + chatrooms);
+        return chatrooms;
     }
 
     @Override
     public Chatroom save(Chatroom entity) {
-        // TODO Auto-generated method stub
-        return null;
+        String SQL = "insert into chatrooms (name, users, messages) values (?, ?, ?) ";
+        int rowsAffected = jdbcTemplate.update(SQL, entity.getName(), entity.getUsers(), entity.getMessages());
+        return entity;
     }
 
     @Override
     public void delete(Long id) {
-        // TODO Auto-generated method stub
-
+        String SQL = "delete from chatrooms where id = ?";
+        jdbcTemplate.update(SQL, id);
     }
 
     @Override
     public void update(Chatroom entity) {
-        // TODO Auto-generated method stub
+        String SQL = "update chatrooms set name = ?, users = ?, messages = ? where id = ?";
+        jdbcTemplate.update(SQL, entity.getName(), entity.getUsers(), entity.getMessages(), entity.getId());
 
     }
 
     @Override
     public Optional<Chatroom> findByName(String name) {
-        // TODO Auto-generated method stub
-        return Optional.empty();
+        String SQL = "select * from chatrooms where name = ?";
+        Chatroom chatroom = (Chatroom) jdbcTemplate.queryForObject(SQL, new ChatroomMapper(), name);
+        return Optional.ofNullable(chatroom);
     }
 }

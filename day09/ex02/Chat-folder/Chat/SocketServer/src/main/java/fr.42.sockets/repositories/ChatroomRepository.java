@@ -13,4 +13,6 @@ public interface ChatroomRepository extends CrudRepository<Chatroom> {
     // get number of messages from a chatroom
     public List<Message> getRecentMessages(Long id, int number);
 
+    public void joinUserToRoom(Long userId, String chatroomName);
+
 }

@@ -17,4 +17,6 @@ public interface ChatroomService {
 
     public List<Message> getRecentMessages(Long id);
 
+    public void joinUserToRoom(Long userId, String chatroomName);
+
 }

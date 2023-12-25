@@ -1,15 +1,16 @@
 
 package fr.fortytwo.sockets.server.server;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
+import fr.fortytwo.sockets.models.Chatroom;
 import fr.fortytwo.sockets.models.User;
 import fr.fortytwo.sockets.server.services.MessageService;
 import fr.fortytwo.sockets.server.services.UsersService;
-
+import fr.fortytwo.sockets.models.Chatroom;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,8 @@ import java.util.concurrent.Executors;
 import java.util.List;
 import java.util.HashMap;
 
+import fr.fortytwo.sockets.server.services.ChatroomService;
+
 /*
  * standard response from server:
  * status: ok | notOk
@@ -42,8 +45,11 @@ public class Server {
     private final UsersService usersService;
     private final ServerSocket serverSocket;
     private final MessageService messageService;
+    private final ChatroomService chatroomService;
     // user name - connection thread
     private final Map<String, UserConnection> onlineClients;
+    // eahc suer and their joined room, name - room name
+    private final Map<String, String> joinedRooms = new HashMap<>();
     // thread pool
     private ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_NUMBER);
 
@@ -51,19 +57,20 @@ public class Server {
     public Server(@Qualifier("serverSocket") ServerSocket serverSocket,
             @Qualifier("usersServiceImpl") UsersService usersService,
             @Qualifier("executorService") ExecutorService executorService,
-            @Qualifier("messageServiceImpl") MessageService messageService) {
+            @Qualifier("messageServiceImpl") MessageService messageService,
+            @Qualifier("chatroomServiceImpl") ChatroomService chatroomService) {
         this.serverSocket = serverSocket;
         this.usersService = usersService;
         this.onlineClients = new ConcurrentHashMap<>();
         this.executorService = executorService;
         this.messageService = messageService;
+        this.chatroomService = chatroomService;
     }
 
     public void initServer() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 Socket client = serverSocket.accept();
-                System.out.println("Client connected: " + client.getInetAddress().getHostAddress());
                 UserConnection userConnection = new UserConnection(client, this);
                 executorService.submit(userConnection); // Use executor to manage thread
             } catch (IOException e) {
@@ -75,25 +82,28 @@ public class Server {
     // adding users to the online clients map
     public void userSignedIn(User user, UserConnection connection) {
         onlineClients.put(user.getName(), connection);
-        System.out.println("User " + user.getName() + " signed in.");
     }
 
     // removing users from the online clients map
     public void userSignedOut(User user) {
-        if (onlineClients.remove(user.getName()) != null) {
-            System.out.println("User " + user.getName() + " signed out.");
-        }
+        onlineClients.remove(user.getName());
     }
 
     // broadcasting messages to online clients
-    public void broadcastMessage(User sender, String message) {
-        System.out.println("We're saving the message");
-        String exactMessage = message.substring(message.indexOf("@") + 1);
-        messageService.saveMessage(exactMessage, sender);
+    public void broadcastMessage(User sender, String message, String roomName) {
+
+        messageService.saveMessage(message, sender);
+
         for (UserConnection connection : onlineClients.values()) {
             // if not the sender, send the message
-            if (!connection.getUser().getName().equals(sender.getName())) {
-                connection.sendMessageToClient(sender.getName() + ": " + exactMessage);
+            if (!connection.getUser().getName().equals(sender.getName())
+                    && joinedRooms.get(sender.getName()).equals(roomName)) {
+                JSONObject response = new JSONObject();
+                response.put("status", "ok");
+                response.put("message", message);
+                response.put("sender", sender.getName());
+                response.put("roomName", roomName);
+                connection.sendMessageToClient(response.toString());
             }
         }
     }
@@ -111,7 +121,8 @@ public class Server {
         private PrintWriter out;
         private ObjectInputStream objectIn;
         private User currentUser;
-        private boolean joinedRoom = false;
+        // name of joined room
+        private String joinedRoom;
 
         public UserConnection(Socket socket, Server server) {
             this.socket = socket;
@@ -122,7 +133,85 @@ public class Server {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             // objectIn = new ObjectInputStream(socket.getInputStream());
-            System.out.println("We're initializing connection");
+        }
+
+        // a method to assemble a response object
+        private JSONObject assembleResponse(String status, String message, Object data) {
+            JSONObject response = new JSONObject();
+            response.put("status", status);
+            response.put("message", message);
+            response.put("data", data);
+            return response;
+        }
+
+        private void enteredChatroom(JSONObject json) throws IOException {
+            // enter chat room
+            // add user to the joined room
+            joinedRooms.put(currentUser.getName(), json.getString("roomName"));
+            chatroomService.joinUserToRoom(currentUser.getId(), json.getString("roomName"));
+            boolean joinedRoom = true;
+
+            sendMessageToClient(assembleResponse("ok", "You've joined the room", null).toString());
+
+            while (joinedRoom) {
+                JSONObject data = new JSONObject(in.readLine());
+                String action = data.getString("action");
+                JSONObject dataObject = data.getJSONObject("data");
+                switch (action) {
+                    case "chat":
+                        String message = dataObject.getString("message");
+                        server.broadcastMessage(currentUser, message, dataObject.getString("roomName"));
+                        break;
+                    case "Exit":
+                        // remove user from joined room
+                        joinedRooms.remove(currentUser.getName());
+                        joinedRoom = false;
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        }
+
+        private void createRoom(JSONObject json) throws IOException {
+            // if user is not authenticated
+            if (!userIsOnline()) {
+                sendMessageToClient(assembleResponse("notOk", "Authorization required.", null).toString());
+                return;
+            }
+
+            try {
+
+                Chatroom chatroom = new Chatroom(json.getString("roomName"));
+                server.chatroomService.saveChatroom(chatroom.getName());
+                sendMessageToClient(
+                        assembleResponse("ok", "Room " + chatroom.getName() + " created successfully.", null)
+                                .toString());
+            } catch (Exception e) {
+                sendMessageToClient(
+                        assembleResponse("notOk", "Room creation failed: " + e.getMessage(), null).toString());
+            }
+        }
+
+        private void listRooms() throws IOException {
+            if (!userIsOnline()) {
+                sendMessageToClient("Authorization required.");
+                return;
+            }
+
+            try {
+
+                List<Chatroom> chatrooms = server.chatroomService.getChatrooms();
+
+                sendMessageToClient(assembleResponse("ok", "List of rooms", chatrooms).toString());
+            } catch (Exception e) {
+                sendMessageToClient(assembleResponse("notOk", "List of rooms failed: " + e.getMessage(), null)
+                        .toString());
+            }
+
+            // sendMessageToClient(assembleResponse("ok", "List of rooms",
+            // chatrooms).toString());
         }
 
         @Override
@@ -133,30 +222,41 @@ public class Server {
                 sendMessageToClient("Hello from Server!\n1. signIn\n2. signUp\n3. Exit");
 
                 while (true) {
-                    String action = in.readLine();
+                    // String action = in.readLine();
+                    JSONObject data = new JSONObject(in.readLine());
+                    String action = data.getString("action");
                     if (action == null)
                         break; // Client disconnected
 
                     switch (action) {
                         case "signIn":
-                            signIn();
+                            signIn(data.getJSONObject("data"));
                             break;
                         case "signUp":
-                            signUp();
+                            signUp(data.getJSONObject("data"));
+                            break;
+                        case "createRoom":
+                            createRoom(data.getJSONObject("data"));
+                            break;
+                        case "listRooms":
+                            listRooms();
+                            break;
+                        case "joinRoom":
+                            enteredChatroom(data.getJSONObject("data"));
                             break;
 
-                        // case "listRooms":
-                        // listRooms();
-                        // break;
-                        // case "logout":
-                        // server.userSignedOut(currentUser);
-                        // break;
+                        // case "chat":
 
-                        case "chat":
-                            chat();
-                            break;
+                        // System.out.println("User wants to chat");
+                        // String message = data.getString("message");
+                        // server.broadcastMessage(currentUser, message, data.getString("roomName"));
+                        // break;
                         case "Exit":
-                            server.userSignedOut(currentUser);
+                            // remove user from online clients, and joined room
+                            joinedRooms.remove(currentUser.getName());
+                            userSignedOut(currentUser);
+
+                            // server.userSignedOut(currentUser);
                             break;
                         default:
                             /// do nothing
@@ -177,62 +277,57 @@ public class Server {
             return onlineClients.containsKey(currentUser.getName());
         }
 
-        private List<Chatroom> listRooms() throws IOException {
-            System.out.println("User wants to list rooms");
-            if (!userIsOnline()) {
-                sendMessageToClient("Authorization required.");
-                return null;
-            }
-        }
-
-        private void signIn() throws IOException {
-            System.out.println("User wants to sign in");
+        private void signIn(JSONObject json) throws IOException {
             try {
-                User user = (User) initObjectIn().readObject();
+
+                User user = new User(json.getString("name"), json.getString("password"));
+
                 Optional<User> validatedUser = server.getUsersService().signin(user.getName(), user.getPassword());
+
                 // if user is online already send error message
                 if (onlineClients.containsKey(user.getName())) {
-                    sendMessageToClient("You're already have an active session");
+                    sendMessageToClient(
+                            assembleResponse("notOk", "You're already have an active session", null).toString());
                     return;
                 }
                 authenticatedUser(validatedUser);
-            } catch (ClassNotFoundException e) {
-                sendMessageToClient("Failed to deserialize user object.");
-            } catch (Exception e) {
-                sendMessageToClient("Sign-in failed: " + e.getMessage());
+
+            } catch (
+
+            Exception e) {
+                sendMessageToClient(assembleResponse("notOk", "Sign-in failed: " + e.getMessage(), null).toString());
             }
         }
 
-        private void signUp() throws IOException {
-            System.out.println("User wants to sign up");
+        private void signUp(JSONObject json) throws IOException {
+
             try {
-                User user = (User) initObjectIn().readObject();
-                System.out.println("Object read from socket: " + user);
+
+                User user = new User(json.getString("name"), json.getString("password"));
                 Optional<User> createdUser = server.getUsersService().signup(user.getName(), user.getPassword());
                 authenticatedUser(createdUser);
-            } catch (ClassNotFoundException e) {
-                sendMessageToClient("Failed to deserialize user object.");
             } catch (Exception e) {
-                sendMessageToClient("Sign-up failed: " + e.getMessage());
+                sendMessageToClient(assembleResponse("notOk", "Sign-up failed: " + e.getMessage(), null).toString());
             }
         }
 
         private void authenticatedUser(Optional<User> user) {
-            System.out.println("trying to authenticate user");
+
             if (user.isPresent()) {
                 this.currentUser = user.get();
                 server.userSignedIn(currentUser, this);
-                sendMessageToClient("Authentication successful.");
+                // sendMessageToClient("Authentication successful.");
+                sendMessageToClient(assembleResponse("ok", "Authentication successful.", null).toString());
                 // sendMessageToClient("Start messaging");
             } else {
-                sendMessageToClient("Authentication failed.");
+                sendMessageToClient(assembleResponse("notOk", "Authentication failed.", null).toString());
             }
         }
 
-        private void chat() throws IOException {
-            String message = in.readLine();
-            server.broadcastMessage(currentUser, message);
-        }
+        // private void chat() throws IOException {
+        // String message = in.readLine();
+        // server.broadcastMessage(currentUser, message);
+        // }
 
         private void sendMessageToClient(String message) {
             out.println(message);

@@ -12,7 +12,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service("chatroomService")
+@Service("chatroomServiceImpl")
 public class ChatroomServiceImpl implements ChatroomService {
 
     private static final int RECENT_MESSAGES_COUNT = 50;
@@ -23,6 +23,7 @@ public class ChatroomServiceImpl implements ChatroomService {
     public void saveChatroom(String name) {
         Chatroom newChatroom = new Chatroom(name);
         chatroomRepository.save(newChatroom);
+
     }
 
     @Override
@@ -46,4 +47,10 @@ public class ChatroomServiceImpl implements ChatroomService {
     public List<Message> getRecentMessages(Long id) {
         return chatroomRepository.getRecentMessages(id, RECENT_MESSAGES_COUNT);
     }
+
+    @Override
+    public void joinUserToRoom(Long userId, String chatroomName) { 
+        chatroomRepository.joinUserToRoom(userId, chatroomName);
+    }
+
 }

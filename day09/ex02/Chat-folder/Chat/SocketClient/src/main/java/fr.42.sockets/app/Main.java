@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 // import fr.fortytwo.sockets.server.models.User;
 
-import fr.fortytwo.sockets.client.authentication.AuthenticationClient;
+import fr.fortytwo.sockets.client.Client;
 
 public class Main {
 
@@ -34,7 +34,7 @@ public class Main {
             int port = parsePort(argument[1]);
             System.setProperty("server.port", argument[1]);
             Socket socket = new Socket("127.0.0.1", port);
-            AuthenticationClient authentication = new AuthenticationClient(socket);
+            Client authentication = new Client(socket);
             authentication.start();
         } catch (Exception e) {
             System.err.println("Err: " + e.getMessage());

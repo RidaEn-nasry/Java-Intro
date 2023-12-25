@@ -28,7 +28,7 @@ public class MessageRepositoryImpl implements MessageRepository {
         this.dataSource = dataSource;
         this.jdbcTemplateObject = jdbcTemplateObject;
         // to reset the table
-        this.resetDatabase();
+        // this.resetDatabase();
     }
 
     private void resetDatabase() {
